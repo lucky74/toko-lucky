@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Premium Menu</title>
+    <title>Lucky Kue Sus - Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
@@ -19,14 +19,16 @@
         .menu-price { color: var(--success); font-weight: bold; display: block; margin: 4px 0; }
         .note-input { width: 85%; padding: 5px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 4px; }
         .add-btn { position: absolute; right: 10px; bottom: 10px; background: var(--primary); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #eee; box-sizing: border-box; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; }
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
 
-        /* MODAL PEMBAYARAN */
+        /* MODAL PEMBAYARAN - SESUAI PERMINTAAN */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 85%; max-width: 350px; padding: 20px; border-radius: 20px; text-align: center; max-height: 85vh; overflow-y: auto; }
-        .qris-img { width: 100%; border-radius: 10px; margin: 15px 0; border: 1px solid #eee; }
-        .rincian-box { text-align: left; background: #f9f9f9; padding: 10px; border-radius: 10px; font-size: 0.85rem; margin-bottom: 10px; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 20px; border-radius: 20px; text-align: center; max-height: 90vh; overflow-y: auto; box-sizing: border-box;}
+        .rincian-box { text-align: left; background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+        .qris-img { width: 100%; max-width: 200px; border-radius: 10px; margin: 10px 0; border: 1px solid #ddd; }
+        .btn-pay { background: var(--success); color: white; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -74,13 +76,17 @@
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3>Konfirmasi Pesanan</h3>
-        <div id="rincianList" class="rincian-box"></div>
-        <h2 id="totalBayar" style="color:var(--success);"></h2>
-        <p style="font-size:0.8rem;">Silakan Scan QRIS Lucky:</p>
+        <h3 style="margin-top:0; color:var(--dark);">Konfirmasi & Pembayaran</h3>
+        <p style="font-size: 0.8rem; color:#666;">Silakan periksa kembali pesanan Anda</p>
+        
+        <div id="rincianList" class="rincian-box">
+            </div>
+
+        <div style="font-size: 0.8rem; color:#444; margin-bottom:5px;">Silakan Scan QRIS Lucky:</div>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
-        <button style="background:var(--success); color:white; width:100%; padding:12px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;" onclick="sendToBot()">SAYA SUDAH BAYAR</button>
-        <button style="background:#eee; color:#333; width:100%; padding:8px; border:none; border-radius:10px; margin-top:8px; cursor:pointer;" onclick="document.getElementById('paymentModal').style.display='none'">KEMBALI</button>
+        
+        <button class="btn-pay" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
+        <button style="background:none; border:none; color:var(--dark); margin-top:15px; cursor:pointer; font-weight:bold;" onclick="document.getElementById('paymentModal').style.display='none'">KEMBALI KE MENU</button>
     </div>
 </div>
 
@@ -107,15 +113,27 @@
 
     function showPayment() {
         let name = document.getElementById('customerName').value;
-        if(!name) { alert("Isi Nama Pemesan!"); return; }
-        let html = `<b>Pemesan: ${name}</b><br><br>`, total = 0;
+        if(!name) { alert("Tolong isi Nama Pemesan!"); return; }
+        
+        let html = `<b style="font-size:1rem;">Atas Nama: ${name}</b><br><br>`, total = 0;
         for (let x in cart) {
             let sub = cart[x].price * cart[x].qty;
             total += sub;
-            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br><small>Catatan: ${cart[x].note || '-'}</small><br>`;
+            html += `
+                <div class="item-row">
+                    <span>${x} x${cart[x].qty}</span>
+                    <span>Rp ${sub.toLocaleString()}</span>
+                </div>
+                <div style="font-size:0.75rem; color:#888; margin-top:-5px; margin-bottom:10px;">Catatan: ${cart[x].note || '-'}</div>
+            `;
         }
+        html += `
+            <div style="border-top: 2px solid var(--primary); padding-top:10px; font-weight:bold; display:flex; justify-content:space-between; font-size:1.1rem; color:var(--success);">
+                <span>TOTAL:</span>
+                <span>Rp ${total.toLocaleString()}</span>
+            </div>
+        `;
         document.getElementById('rincianList').innerHTML = html;
-        document.getElementById('totalBayar').innerText = `Total: Rp ${total.toLocaleString()}`;
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
