@@ -3,32 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Premium</title>
+    <title>Lucky Kue Sus - All-in-One Payment</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 120px; }
         .header { height: 160px; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 4px solid var(--primary); }
         .container { padding: 15px; }
-        .name-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .name-box input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .menu-card { background: white; border-radius: 15px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .menu-img { width: 100px; height: 100px; object-fit: cover; }
         .menu-details { padding: 10px; flex: 1; position: relative; }
-        .menu-title { font-weight: bold; margin: 0; }
-        .menu-price { color: var(--success); font-weight: bold; display: block; margin: 4px 0; }
-        .note-input { width: 85%; padding: 5px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 4px; }
-        .add-btn { position: absolute; right: 10px; bottom: 10px; background: var(--primary); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; }
-        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; display: none; cursor: pointer; }
-
-        /* MODAL PEMBAYARAN - SESUAI PERMINTAAN */
+        .btn-loc { background: var(--dark); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #eee; box-sizing: border-box; }
+        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; display: none; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 90%; max-width: 380px; padding: 20px; border-radius: 20px; text-align: center; max-height: 90vh; overflow-y: auto; box-sizing: border-box;}
-        .rincian-box { text-align: left; background: #fdfdfd; padding: 15px; border: 1px solid #eee; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; }
-        .item-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .qris-img { width: 100%; max-width: 200px; border-radius: 10px; margin: 10px 0; border: 1px solid #ddd; }
-        .btn-pay { background: var(--success); color: white; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-top: 10px; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 20px; border-radius: 20px; text-align: center; max-height: 90vh; overflow-y: auto; }
+        .qris-img { width: 100%; max-width: 200px; margin: 10px 0; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -36,57 +27,34 @@
 <div class="header"><h1>Lucky Kue Sus</h1></div>
 
 <div class="container">
-    <div class="name-box">
-        <label style="font-size:0.8rem; font-weight:bold;">NAMA PEMESAN:</label>
-        <input type="text" id="customerName" placeholder="Tulis nama Anda...">
+    <div class="box">
+        <label style="font-size:0.8rem; font-weight:bold;">1. NAMA PEMESAN:</label>
+        <input type="text" id="customerName" style="width:100%; padding:10px; margin-top:5px; border:1px solid #ddd; border-radius:8px;" placeholder="Tulis nama Anda...">
+        
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-top:10px;">2. LOKASI PENGIRIMAN:</label>
+        <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR OTOMATIS</button>
+        <div id="statusLokasi" style="font-size:0.75rem; color:var(--success); margin-top:5px; display:none;">✅ Lokasi Terdeteksi</div>
     </div>
 
     <div class="menu-card">
         <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
         <div class="menu-details">
-            <p class="menu-title">Sus Strawberry</p>
-            <span class="menu-price">Rp 7.000</span>
-            <input type="text" class="note-input" id="note1" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note1')">+</button>
+            <strong>Sus Strawberry</strong><br>
+            <span style="color:var(--success); font-weight:bold;">Rp 7.000</span>
+            <input type="text" style="width:80%; font-size:0.7rem;" id="n1" placeholder="Catatan...">
+            <button style="position:absolute; right:10px; bottom:10px;" onclick="add('Sus Strawberry', 7000, 'n1')">+</button>
         </div>
     </div>
-
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
-        <div class="menu-details">
-            <p class="menu-title">Sus Coklat Lumer</p>
-            <span class="menu-price">Rp 6.500</span>
-            <input type="text" class="note-input" id="note2" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Coklat', 6500, 'note2')">+</button>
-        </div>
     </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/Resep-Kue-Sus-Premium-dengan-Mentega-Wijsman-di-Blog.tokowahab.com_.png" class="menu-img">
-        <div class="menu-details">
-            <p class="menu-title">Sus Keju Gurih</p>
-            <span class="menu-price">Rp 7.500</span>
-            <input type="text" class="note-input" id="note3" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Keju', 7500, 'note3')">+</button>
-        </div>
-    </div>
-</div>
-
-<div class="footer"><button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN SEKARANG</button></div>
+<div class="footer"><button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & BAYAR SEKARANG</button></div>
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0; color:var(--dark);">Konfirmasi & Pembayaran</h3>
-        <p style="font-size: 0.8rem; color:#666;">Silakan periksa kembali pesanan Anda</p>
-        
-        <div id="rincianList" class="rincian-box">
-            </div>
-
-        <div style="font-size: 0.8rem; color:#444; margin-bottom:5px;">Silakan Scan QRIS Lucky:</div>
+        <h3>Struk Pembayaran Lucky</h3>
+        <div id="rincianList" style="text-align:left; background:#f9f9f9; padding:15px; border-radius:10px; font-size:0.85rem;"></div>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
-        
-        <button class="btn-pay" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
-        <button style="background:none; border:none; color:var(--dark); margin-top:15px; cursor:pointer; font-weight:bold;" onclick="document.getElementById('paymentModal').style.display='none'">KEMBALI KE MENU</button>
+        <button style="background:var(--success); color:white; width:100%; padding:14px; border:none; border-radius:10px; font-weight:bold;" onclick="sendToBot()">KONFIRMASI PEMBAYARAN ✓</button>
     </div>
 </div>
 
@@ -94,6 +62,35 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
     let cart = {};
+    let ongkir = 0;
+    let jarakGlobal = 0;
+
+    // Koordinat Toko Lucky
+    const TOKO_LAT = -6.40248;
+    const TOKO_LON = 106.79424;
+
+    function ambilLokasi() {
+        document.getElementById('btnGetLoc').innerText = "Sedang Menghitung...";
+        navigator.geolocation.getCurrentPosition(pos => {
+            let lat = pos.coords.latitude;
+            let lon = pos.coords.longitude;
+            
+            // Hitung Jarak
+            const R = 6371;
+            const dLat = (lat - TOKO_LAT) * Math.PI / 180;
+            const dLon = (lon - TOKO_LON) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            // Hitung Ongkir
+            ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
+            ongkir += 2000; // Biaya Layanan
+
+            document.getElementById('statusLokasi').style.display = 'block';
+            document.getElementById('btnGetLoc').style.display = 'none';
+            updateUI();
+        }, () => alert("Gagal mengambil lokasi. Pastikan GPS aktif."));
+    }
 
     function add(name, price, noteId) {
         let note = document.getElementById(noteId).value;
@@ -105,50 +102,32 @@
     function updateUI() {
         let total = 0, count = 0;
         for (let x in cart) { count += cart[x].qty; total += (cart[x].price * cart[x].qty); }
-        if (count > 0) {
+        if (count > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
-            document.getElementById('btnOrder').innerText = `CHECKOUT (${count} ITEM) - RP ${total.toLocaleString()}`;
+            document.getElementById('btnOrder').innerText = `TOTAL BAYAR: RP ${(total + ongkir).toLocaleString()}`;
         }
     }
 
     function showPayment() {
         let name = document.getElementById('customerName').value;
-        if(!name) { alert("Tolong isi Nama Pemesan!"); return; }
+        if(!name) return alert("Isi Nama Pemesan!");
         
-        let html = `<b style="font-size:1rem;">Atas Nama: ${name}</b><br><br>`, total = 0;
+        let html = `<b>Atas Nama: ${name}</b><br><hr>`, totalKue = 0;
         for (let x in cart) {
             let sub = cart[x].price * cart[x].qty;
-            total += sub;
-            html += `
-                <div class="item-row">
-                    <span>${x} x${cart[x].qty}</span>
-                    <span>Rp ${sub.toLocaleString()}</span>
-                </div>
-                <div style="font-size:0.75rem; color:#888; margin-top:-5px; margin-bottom:10px;">Catatan: ${cart[x].note || '-'}</div>
-            `;
+            totalKue += sub;
+            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br>`;
         }
-        html += `
-            <div style="border-top: 2px solid var(--primary); padding-top:10px; font-weight:bold; display:flex; justify-content:space-between; font-size:1.1rem; color:var(--success);">
-                <span>TOTAL:</span>
-                <span>Rp ${total.toLocaleString()}</span>
-            </div>
-        `;
+        html += `<hr>• Subtotal Kue: Rp ${totalKue.toLocaleString()}<br>`;
+        html += `• Ongkir (${jarakGlobal.toFixed(1)}km): Rp ${ongkir.toLocaleString()}<br>`;
+        html += `<h3 style="color:var(--success);">GRAND TOTAL: Rp ${(totalKue + ongkir).toLocaleString()}</h3>`;
+        
         document.getElementById('rincianList').innerHTML = html;
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
     function sendToBot() {
-        let name = document.getElementById('customerName').value;
-        let total = 0;
-        let teks = `👤 *PEMESAN*: ${name}\n`;
-        teks += `📋 *RINCIAN PESANAN LUCKY*:\n\n`;
-        for (let x in cart) {
-            let sub = cart[x].price * cart[x].qty;
-            total += sub;
-            teks += `🔸 *${x}* (x${cart[x].qty})\n   _Catatan: ${cart[x].note || '-'}_ \n   Subtotal: Rp ${sub.toLocaleString()}\n\n`;
-        }
-        teks += `--------------------------\n*TOTAL BAYAR: Rp ${total.toLocaleString()}*`;
-        tg.sendData(teks);
+        tg.sendData(document.getElementById('rincianList').innerText + "\n\n✅ PEMBAYARAN LUNAS VIA QRIS");
         tg.close();
     }
 </script>
