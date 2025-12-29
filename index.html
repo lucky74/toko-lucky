@@ -3,94 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Digital Menu</title>
+    <title>Lucky Kue Sus - Luxury Digital Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: #f39c12;
+            --primary: #f39c12; /* Warna Gold/Kue */
             --dark: #2c3e50;
             --light-bg: #fdfaf5;
             --success: #27ae60;
         }
         body { 
             font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; 
-            background-color: var(--light-bg); color: #333; padding-bottom: 100px;
+            background-color: var(--light-bg); color: #333; padding-bottom: 120px;
         }
+
+        /* HEADER */
         .header {
-            height: 150px;
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://i.ibb.co.com/8gTtWvPk/image.jpg');
+            height: 180px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg');
             background-size: cover; background-position: center;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: white; text-align: center; border-bottom: 5px solid var(--primary);
         }
-        .name-section { padding: 15px; background: white; margin: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .name-section input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        
+
+        .name-section { padding: 15px; background: white; margin: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .name-section input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+
         .menu-grid { padding: 10px; }
         .menu-card { 
             background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden;
-            display: flex; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary);
         }
-        .menu-img { width: 110px; height: 110px; object-fit: cover; }
+        .menu-img { width: 120px; height: 120px; object-fit: cover; }
         .menu-info { padding: 12px; flex: 1; position: relative; }
-        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
-        .menu-price { color: var(--success); font-weight: bold; margin: 5px 0; }
-        .note-input { width: 80%; padding: 5px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; color: var(--dark); }
+        .menu-price { color: var(--success); font-weight: bold; margin: 5px 0; font-size: 1.1rem; }
+        .note-input { width: 85%; padding: 6px; font-size: 0.85rem; border: 1px solid #eee; border-radius: 5px; margin-top: 8px; background: #fafafa; }
         .add-btn { 
             position: absolute; right: 15px; bottom: 15px; 
             background: var(--primary); color: white; border: none; 
-            width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer;
+            width: 40px; height: 40px; border-radius: 50%; font-size: 1.8rem; cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 2px solid var(--primary); box-sizing: border-box; }
-        .btn-order { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; display: none; cursor: pointer; }
+        /* FOOTER */
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 2px solid var(--primary); box-sizing: border-box; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        .btn-order { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
 
         /* MODAL QRIS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 85%; max-width: 350px; padding: 20px; border-radius: 20px; text-align: center; }
-        .qris-img { width: 100%; border-radius: 10px; margin: 15px 0; }
-        .btn-close { background: var(--dark); color: white; width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; }
+        .qris-img { width: 100%; border-radius: 12px; margin: 15px 0; border: 2px solid #eee; }
+        .total-pay { font-size: 1.4rem; color: var(--success); font-weight: bold; margin: 10px 0; }
+        .btn-close { background: var(--dark); color: white; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0;">Lucky Kue Sus</h1>
-    <p style="margin:5px 0;">Freshly Baked Daily</p>
+    <h1 style="margin:0; font-size: 2rem;">Lucky Kue Sus</h1>
+    <p style="margin:5px 0; letter-spacing: 2px;">PREMIUM & FRESHLY BAKED</p>
 </div>
 
 <div class="name-section">
-    <label style="font-size: 0.8rem; font-weight: bold;">NAMA PEMESAN:</label>
-    <input type="text" id="customerName" placeholder="Masukkan nama Anda...">
+    <label style="font-size: 0.85rem; font-weight: bold; color: var(--dark); display: block; margin-bottom: 8px;">NAMA PEMESAN:</label>
+    <input type="text" id="customerName" placeholder="Masukkan nama Anda untuk pesanan...">
 </div>
 
 <div class="menu-grid">
     <div class="menu-card">
-        <img src="https://ibb.co.com/gb5SHqLk" class="menu-img">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img" alt="Sus Strawberry">
         <div class="menu-info">
             <p class="menu-title">Sus Strawberry</p>
             <p class="menu-price">7.000</p>
-            <input type="text" class="note-input" id="note-strawberry" placeholder="Catatan...">
+            <input type="text" class="note-input" id="note-strawberry" placeholder="Tambah catatan...">
             <button class="add-btn" onclick="tambahItem('Sus Strawberry', 7000, 'note-strawberry')">+</button>
         </div>
     </div>
 
     <div class="menu-card">
-        <img src="https://ibb.co.com/cc0hvrb2" class="menu-img">
-        <div class="menu-info">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img" alt="Sus Coklat">
+        <div class="info" style="flex:1; padding: 12px; position: relative;">
             <p class="menu-title">Sus Coklat Lumer</p>
             <p class="menu-price">6.500</p>
-            <input type="text" class="note-input" id="note-coklat" placeholder="Catatan...">
+            <input type="text" class="note-input" id="note-coklat" placeholder="Tambah catatan...">
             <button class="add-btn" onclick="tambahItem('Sus Coklat', 6500, 'note-coklat')">+</button>
         </div>
     </div>
 
     <div class="menu-card">
-        <img src="https://ibb.co.com/xSrKb96L" class="menu-img">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/Resep-Kue-Sus-Premium-dengan-Mentega-Wijsman-di-Blog.tokowahab.com_.png" class="menu-img" alt="Sus Keju">
         <div class="menu-info">
             <p class="menu-title">Sus Keju Gurih</p>
             <p class="menu-price">7.500</p>
-            <input type="text" class="note-input" id="note-keju" placeholder="Catatan...">
+            <input type="text" class="note-input" id="note-keju" placeholder="Tambah catatan...">
             <button class="add-btn" onclick="tambahItem('Sus Keju', 7500, 'note-keju')">+</button>
         </div>
     </div>
@@ -102,10 +108,14 @@
 
 <div id="modalQRIS" class="modal">
     <div class="modal-content">
-        <h2 style="margin:0;">Pembayaran QRIS</h2>
-        <p id="displayTotal" style="color:var(--success); font-weight:bold; font-size:1.2rem;"></p>
-        <img src="https://ibb.co.com/ML5ccHT" class="qris-img">
-        <div id="rincianPesanan" style="text-align:left; font-size:0.8rem; margin-bottom:15px; border-top:1px dashed #ddd; padding-top:10px;"></div>
+        <h2 style="margin:0; color: var(--dark);">Pembayaran</h2>
+        <p style="font-size: 0.9rem; color: #777;">Silakan scan QRIS Lucky di bawah ini</p>
+        
+        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img" alt="QRIS">
+        
+        <div id="displayTotal" class="total-pay"></div>
+        <div id="rincianPesanan" style="text-align:left; font-size:0.85rem; margin-bottom:15px; border-top:1px dashed #ddd; padding-top:10px; max-height: 150px; overflow-y: auto;"></div>
+        
         <button class="btn-close" onclick="kirimKeBot()">Sudah Bayar & Tutup</button>
     </div>
 </div>
@@ -136,24 +146,27 @@
         }
         if (totalItems > 0) {
             btn.style.display = 'block';
-            btn.innerText = `PESAN (${totalItems} ITEM) - RP ${totalHarga.toLocaleString()}`;
+            btn.innerText = `PESAN (${totalItems} ITEM) - RP ${totalHarga.toLocaleString('id-ID')}`;
         }
     }
 
     function bukaQRIS() {
-        const name = document.getElementById('customerName').value;
-        if (!name) { alert("Masukkan Nama Pemesan dulu ya!"); return; }
+        const name = document.getElementById('customerName').value.trim();
+        if (!name) { 
+            alert("Harap masukkan Nama Pemesan!"); 
+            return; 
+        }
 
         let totalHarga = 0;
         let rincianHTML = "";
         for (let key in keranjang) {
             let sub = keranjang[key].harga * keranjang[key].qty;
             totalHarga += sub;
-            rincianHTML += `• ${key} x${keranjang[key].qty} (Rp ${sub.toLocaleString()})<br><i>Catatan: ${keranjang[key].note || '-'}</i><br>`;
+            rincianHTML += `<b>${key}</b> x${keranjang[key].qty}<br><i>Catatan: ${keranjang[key].note || '-'}</i><br><br>`;
         }
 
-        document.getElementById('displayTotal').innerText = `Total: Rp ${totalHarga.toLocaleString()}`;
-        document.getElementById('rincianPesanan').innerHTML = `<b>Pemesan: ${name}</b><br><br>${rincianHTML}`;
+        document.getElementById('displayTotal').innerText = `Total: Rp ${totalHarga.toLocaleString('id-ID')}`;
+        document.getElementById('rincianPesanan').innerHTML = `<b>Atas Nama: ${name}</b><br><br>${rincianHTML}`;
         document.getElementById('modalQRIS').style.display = 'flex';
     }
 
@@ -161,17 +174,18 @@
         const name = document.getElementById('customerName').value;
         let listPesanan = [];
         let totalHarga = 0;
+        let teksBot = `👤 *PEMESAN*: ${name}\n\n`;
 
         for (let key in keranjang) {
+            let sub = keranjang[key].harga * keranjang[key].qty;
             listPesanan.push({ name: key, qty: keranjang[key].qty, harga: keranjang[key].harga, note: keranjang[key].note });
-            totalHarga += (keranjang[key].harga * keranjang[key].qty);
+            totalHarga += sub;
+            teksBot += `🔹 *${key}* (x${keranjang[key].qty})\n   Catatan: ${keranjang[key].note || '-'}\n\n`;
         }
+        teksBot += `--------------------------\n*TOTAL BAYAR: Rp ${totalHarga.toLocaleString('id-ID')}*`;
 
-        tg.sendData(JSON.stringify({
-            pembeli: name,
-            items: listPesanan,
-            total: totalHarga
-        }));
+        // Kirim teks langsung agar bot python mudah membacanya
+        tg.sendData(teksBot);
         tg.close();
     }
 </script>
