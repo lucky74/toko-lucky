@@ -6,15 +6,190 @@
     <title>Lucky Kue Sus</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #f39c12; --dark: #2c3e50; }
-        body { font-family: sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 80px; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .container { padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .price { color: #27ae60; font-weight: bold; font-size: 0.9rem; }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: white; box-sizing: border-box; border-top: 1px solid #eee; }
-        .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; display: none; cursor: pointer; }
+        :root { 
+            --primary: #f39c12; 
+            --dark: #2c3e50; 
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --light-bg: #f8f9fa;
+            --card-bg: white;
+            --border-radius: 12px;
+            --shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background: var(--light-bg); 
+            padding-bottom: 80px; 
+            color: var(--dark);
+        }
+        header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 0 0 var(--border-radius) var(--border-radius); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+        }
+        .container { 
+            padding: 15px; 
+        }
+        .card { 
+            background: var(--card-bg); 
+            border-radius: var(--border-radius); 
+            padding: 15px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: var(--shadow); 
+            flex-wrap: wrap; /* Agar responsif di layar kecil */
+        }
+        .card img {
+            width: 80px; /* Ukuran gambar */
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .item-details {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        .item-details strong {
+            font-size: 1.1rem;
+        }
+        .price { 
+            color: var(--success); 
+            font-weight: bold; 
+            font-size: 0.95rem; 
+            margin-top: 4px;
+            display: block;
+        }
+        .btn-add { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: background-color 0.2s ease;
+        }
+        .btn-add:hover {
+            background-color: darken(var(--primary), 10%); /* Efek hover */
+        }
+        .footer { 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--card-bg); 
+            box-sizing: border-box; 
+            border-top: 1px solid #eee; 
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+        .btn-checkout { 
+            background: var(--success); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 15px; 
+            border-radius: var(--border-radius); 
+            font-size: 1rem; 
+            font-weight: bold; 
+            display: none; 
+            cursor: pointer; 
+            transition: background-color 0.2s ease;
+        }
+        .btn-checkout:hover {
+            background-color: darken(var(--success), 10%);
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: auto;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            width: 90%; /* Smaller on mobile */
+            max-width: 400px; /* Max width on desktop */
+            text-align: center;
+            position: relative;
+        }
+        .modal-content h2 {
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .modal-content img.qris {
+            width: 100%;
+            max-width: 250px; /* Ukuran maksimal QRIS */
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+        .modal-content p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        .modal-content .order-summary {
+            background-color: var(--light-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .order-summary h3 {
+            margin-top: 0;
+            color: var(--dark);
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .order-summary div {
+            margin-bottom: 5px;
+        }
+        .order-summary .total-amount {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -25,34 +200,86 @@
 
     <div class="container">
         <div class="card">
-            <div><strong>Sus Vanila Classic</strong><br><span class="price">Rp 5.000</span></div>
-            <button class="btn-add" onclick="add('Sus Vanila', 5000)">+ Tambah</button>
+            <img src="https://ibb.co.com/gb5SHqLk" alt="Kue Sus Strawberry">
+            <div class="item-details">
+                <strong>Sus Strawberry Cream</strong><br>
+                <span class="price">Rp 7.000</span>
+            </div>
+            <button class="btn-add" onclick="add('Sus Strawberry', 7000)">+ Tambah</button>
         </div>
+        
         <div class="card">
-            <div><strong>Sus Coklat Lumer</strong><br><span class="price">Rp 6.500</span></div>
+            <img src="https://ibb.co.com/cc0hvrb2" alt="Kue Sus Coklat">
+            <div class="item-details">
+                <strong>Sus Coklat Lumer</strong><br>
+                <span class="price">Rp 6.500</span>
+            </div>
             <button class="btn-add" onclick="add('Sus Coklat', 6500)">+ Tambah</button>
         </div>
+
         <div class="card">
-            <div><strong>Sus Buah Segar</strong><br><span class="price">Rp 7.500</span></div>
-            <button class="btn-add" onclick="add('Sus Buah', 7500)">+ Tambah</button>
+            <img src="https://ibb.co.com/xSrKb96L" alt="Kue Sus Keju">
+            <div class="item-details">
+                <strong>Sus Keju Gurih</strong><br>
+                <span class="price">Rp 7.500</span>
+            </div>
+            <button class="btn-add" onclick="add('Sus Keju', 7500)">+ Tambah</button>
+        </div>
+
+        <div class="card">
+            <img src="https://via.placeholder.com/80?text=Vanila" alt="Kue Sus Vanila"> <div class="item-details">
+                <strong>Sus Vanila Classic</strong><br>
+                <span class="price">Rp 5.000</span>
+            </div>
+            <button class="btn-add" onclick="add('Sus Vanila', 5000)">+ Tambah</button>
         </div>
     </div>
 
     <div class="footer">
-        <button id="btnOrder" class="btn-checkout" onclick="checkout()"></button>
+        <button id="btnOrder" class="btn-checkout" onclick="checkout()">Pesan (0 item) - Rp 0</button>
+    </div>
+
+    <div id="qrisModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2>Pembayaran Pesanan</h2>
+            <p>Silakan scan QRIS di bawah ini untuk menyelesaikan pembayaran Anda.</p>
+            <img src="https://ibb.co.com/ML5ccHT" alt="QRIS Pembayaran" class="qris">
+            <p><strong>Total Pembayaran:</strong></p>
+            <div class="total-qris-display">Rp <span id="qrisTotalAmount">0</span></div>
+
+            <div class="order-summary">
+                <h3>Rincian Pesanan Anda:</h3>
+                <div id="qrisOrderSummary"></div>
+                <div class="total-amount">Total Belanja: Rp <span id="qrisFinalTotal">0</span></div>
+            </div>
+            <p style="margin-top: 20px;">Setelah pembayaran, bot akan memproses pesanan Anda.</p>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         let cart = [];
+        const btnOrder = document.getElementById('btnOrder');
+        const qrisModal = document.getElementById('qrisModal');
+        const qrisTotalAmount = document.getElementById('qrisTotalAmount');
+        const qrisOrderSummary = document.getElementById('qrisOrderSummary');
+        const qrisFinalTotal = document.getElementById('qrisFinalTotal');
+
+        function updateCheckoutButton() {
+            if (cart.length === 0) {
+                btnOrder.style.display = 'none';
+            } else {
+                btnOrder.style.display = 'block';
+                const total = cart.reduce((s, i) => s + i.price, 0);
+                btnOrder.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+            }
+        }
 
         function add(name, price) {
             cart.push({name, price});
-            const btn = document.getElementById('btnOrder');
-            btn.style.display = 'block';
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            btn.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+            updateCheckoutButton();
         }
 
         function checkout() {
@@ -71,12 +298,42 @@
 
             const totalHarga = cart.reduce((s, i) => s + i.price, 0);
 
+            // Tampilkan modal QRIS
+            showQrisModal(groupedCart, totalHarga);
+
+            // Kirim data pesanan ke bot (opsional, bisa digeser setelah konfirmasi pembayaran)
+            // Untuk demo, kita kirim saat Checkout dipencet
             tg.sendData(JSON.stringify({
                 items: groupedCart,
-                total: totalHarga
+                total: totalHarga,
+                status: "QRIS_SHOWN" // Menandakan bahwa QRIS sudah ditampilkan
             }));
-            tg.close();
         }
+
+        function showQrisModal(items, total) {
+            qrisTotalAmount.innerText = total.toLocaleString();
+            qrisFinalTotal.innerText = total.toLocaleString();
+            
+            qrisOrderSummary.innerHTML = ''; // Kosongkan rincian sebelumnya
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerText = `${item.name} x${item.quantity} (Rp${(item.price * item.quantity).toLocaleString()})`;
+                qrisOrderSummary.appendChild(itemDiv);
+            });
+            
+            qrisModal.style.display = 'flex'; // Tampilkan modal
+        }
+
+        function closeModal() {
+            qrisModal.style.display = 'none';
+            // Opsional: reset cart setelah pembayaran atau konfirmasi
+            // cart = [];
+            // updateCheckoutButton();
+            tg.close(); // Tutup WebApp setelah pembayaran
+        }
+
+        // Initialize button state
+        updateCheckoutButton();
     </script>
 </body>
 </html>
