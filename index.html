@@ -7,185 +7,213 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: #f39c12; /* Warna Gold/Kue */
-            --dark: #2c3e50;
-            --light-bg: #fdfaf5;
-            --success: #27ae60;
+            --primary-color: #f39c12; /* Warna Gold Lucky */
+            --secondary-color: #2c3e50;
+            --bg-color: #fdfaf5;
         }
         body { 
-            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; 
-            background-color: var(--light-bg); color: #333; padding-bottom: 120px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 0; background-color: var(--bg-color);
+            padding-bottom: 120px;
         }
 
-        /* HEADER */
+        /* Header Mewah ala Restoran */
         .header {
-            height: 180px;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg');
+            height: 200px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('https://ik.imagekit.io/uu3h5rnaw/images.jpg');
             background-size: cover; background-position: center;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; text-align: center; border-bottom: 5px solid var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            color: white; border-bottom: 4px solid var(--primary-color);
         }
 
-        .name-section { padding: 15px; background: white; margin: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .name-section input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 1rem; }
+        .container { padding: 15px; }
 
-        .menu-grid { padding: 10px; }
-        .menu-card { 
-            background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden;
-            display: flex; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary);
+        /* Input Nama Pemesan */
+        .name-box {
+            background: white; padding: 15px; border-radius: 12px;
+            margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        .menu-img { width: 120px; height: 120px; object-fit: cover; }
-        .menu-info { padding: 12px; flex: 1; position: relative; }
-        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; color: var(--dark); }
-        .menu-price { color: var(--success); font-weight: bold; margin: 5px 0; font-size: 1.1rem; }
-        .note-input { width: 85%; padding: 6px; font-size: 0.85rem; border: 1px solid #eee; border-radius: 5px; margin-top: 8px; background: #fafafa; }
-        .add-btn { 
-            position: absolute; right: 15px; bottom: 15px; 
-            background: var(--primary); color: white; border: none; 
-            width: 40px; height: 40px; border-radius: 50%; font-size: 1.8rem; cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        .name-box input {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 8px; box-sizing: border-box; font-size: 1rem;
         }
 
-        /* FOOTER */
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 2px solid var(--primary); box-sizing: border-box; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
-        .btn-order { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
+        /* Grid Menu ala File Restoran */
+        .menu-card {
+            background: white; border-radius: 15px; margin-bottom: 15px;
+            display: flex; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 6px solid var(--primary-color);
+        }
 
-        /* MODAL QRIS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; }
-        .qris-img { width: 100%; border-radius: 12px; margin: 15px 0; border: 2px solid #eee; }
-        .total-pay { font-size: 1.4rem; color: var(--success); font-weight: bold; margin: 10px 0; }
-        .btn-close { background: var(--dark); color: white; width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .menu-img {
+            width: 120px; height: 120px;
+            object-fit: cover; /* Ini yang bikin foto rapi */
+        }
+
+        .menu-details { padding: 12px; flex: 1; position: relative; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; color: #333; }
+        .menu-price { color: #27ae60; font-weight: bold; margin: 5px 0; display: block; }
+        
+        .note-input {
+            width: 80%; padding: 6px; font-size: 0.8rem;
+            border: 1px solid #eee; border-radius: 4px; margin-top: 5px;
+        }
+
+        .add-btn {
+            position: absolute; right: 15px; bottom: 15px;
+            background: var(--primary-color); color: white; border: none;
+            width: 35px; height: 35px; border-radius: 50%;
+            font-size: 1.5rem; cursor: pointer; font-weight: bold;
+        }
+
+        /* Footer & Tombol Order */
+        .footer {
+            position: fixed; bottom: 0; width: 100%; background: white;
+            padding: 20px; border-top: 1px solid #eee; box-sizing: border-box;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        }
+        .order-btn {
+            background: #27ae60; color: white; width: 100%;
+            padding: 15px; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer;
+            display: none;
+        }
+
+        /* Modal QRIS ala Restoran */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; width: 85%; max-width: 350px;
+            padding: 20px; border-radius: 20px; text-align: center;
+        }
+        .qris-img { width: 100%; border-radius: 10px; margin: 15px 0; border: 1px solid #eee; }
+        .close-btn {
+            background: #333; color: white; width: 100%;
+            padding: 12px; border: none; border-radius: 10px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0; font-size: 2rem;">Lucky Kue Sus</h1>
-    <p style="margin:5px 0; letter-spacing: 2px;">PREMIUM & FRESHLY BAKED</p>
+    <div style="text-align:center;">
+        <h1 style="margin:0;">Lucky Kue Sus</h1>
+        <p style="margin:5px 0; opacity:0.8;">Premium Quality Sus</p>
+    </div>
 </div>
 
-<div class="name-section">
-    <label style="font-size: 0.85rem; font-weight: bold; color: var(--dark); display: block; margin-bottom: 8px;">NAMA PEMESAN:</label>
-    <input type="text" id="customerName" placeholder="Masukkan nama Anda untuk pesanan...">
-</div>
-
-<div class="menu-grid">
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img" alt="Sus Strawberry">
-        <div class="menu-info">
-            <p class="menu-title">Sus Strawberry</p>
-            <p class="menu-price">7.000</p>
-            <input type="text" class="note-input" id="note-strawberry" placeholder="Tambah catatan...">
-            <button class="add-btn" onclick="tambahItem('Sus Strawberry', 7000, 'note-strawberry')">+</button>
-        </div>
+<div class="container">
+    <div class="name-box">
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:5px;">NAMA PEMESAN:</label>
+        <input type="text" id="customerName" placeholder="Tulis nama Anda...">
     </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img" alt="Sus Coklat">
-        <div class="info" style="flex:1; padding: 12px; position: relative;">
-            <p class="menu-title">Sus Coklat Lumer</p>
-            <p class="menu-price">6.500</p>
-            <input type="text" class="note-input" id="note-coklat" placeholder="Tambah catatan...">
-            <button class="add-btn" onclick="tambahItem('Sus Coklat', 6500, 'note-coklat')">+</button>
+    <div id="menuItems">
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Strawberry</p>
+                <span class="menu-price">Rp 7.000</span>
+                <input type="text" class="note-input" id="note1" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note1')">+</button>
+            </div>
         </div>
-    </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/Resep-Kue-Sus-Premium-dengan-Mentega-Wijsman-di-Blog.tokowahab.com_.png" class="menu-img" alt="Sus Keju">
-        <div class="menu-info">
-            <p class="menu-title">Sus Keju Gurih</p>
-            <p class="menu-price">7.500</p>
-            <input type="text" class="note-input" id="note-keju" placeholder="Tambah catatan...">
-            <button class="add-btn" onclick="tambahItem('Sus Keju', 7500, 'note-keju')">+</button>
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Coklat Lumer</p>
+                <span class="menu-price">Rp 6.500</span>
+                <input type="text" class="note-input" id="note2" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Coklat', 6500, 'note2')">+</button>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/Resep-Kue-Sus-Premium-dengan-Mentega-Wijsman-di-Blog.tokowahab.com_.png" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Keju Gurih</p>
+                <span class="menu-price">Rp 7.500</span>
+                <input type="text" class="note-input" id="note3" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Keju', 7500, 'note3')">+</button>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="footer">
-    <button id="btnOrder" class="btn-order" onclick="bukaQRIS()">PESAN SEKARANG</button>
+    <button id="mainOrderBtn" class="order-btn" onclick="showQRIS()">KONFIRMASI PESANAN</button>
 </div>
 
-<div id="modalQRIS" class="modal">
+<div id="qrisModal" class="modal">
     <div class="modal-content">
-        <h2 style="margin:0; color: var(--dark);">Pembayaran</h2>
-        <p style="font-size: 0.9rem; color: #777;">Silakan scan QRIS Lucky di bawah ini</p>
-        
-        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img" alt="QRIS">
-        
-        <div id="displayTotal" class="total-pay"></div>
-        <div id="rincianPesanan" style="text-align:left; font-size:0.85rem; margin-bottom:15px; border-top:1px dashed #ddd; padding-top:10px; max-height: 150px; overflow-y: auto;"></div>
-        
-        <button class="btn-close" onclick="kirimKeBot()">Sudah Bayar & Tutup</button>
+        <h2 style="margin:0;">Pembayaran QRIS</h2>
+        <p style="font-size:0.9rem; color:#666;">Scan QRIS di bawah ini</p>
+        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
+        <div id="orderTotal" style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#27ae60;"></div>
+        <button class="close-btn" onclick="sendToBot()">Sudah Bayar & Selesai</button>
     </div>
 </div>
 
 <script>
-    const tg = window.Telegram.WebApp;
+    let tg = window.Telegram.WebApp;
     tg.expand();
-    let keranjang = {};
+    let cart = {};
 
-    function tambahItem(nama, harga, idNote) {
-        const catatan = document.getElementById(idNote).value;
-        if (!keranjang[nama]) {
-            keranjang[nama] = { harga: harga, qty: 1, note: catatan };
+    function add(name, price, noteId) {
+        let note = document.getElementById(noteId).value;
+        if (!cart[name]) {
+            cart[name] = { price: price, qty: 1, note: note };
         } else {
-            keranjang[nama].qty += 1;
-            if(catatan) keranjang[nama].note = catatan;
+            cart[name].qty += 1;
+            if(note) cart[name].note = note;
         }
-        updateFooter();
+        updateButton();
     }
 
-    function updateFooter() {
-        const btn = document.getElementById('btnOrder');
-        let totalItems = 0;
-        let totalHarga = 0;
-        for (let key in keranjang) {
-            totalItems += keranjang[key].qty;
-            totalHarga += (keranjang[key].harga * keranjang[key].qty);
+    function updateButton() {
+        let btn = document.getElementById('mainOrderBtn');
+        let total = 0;
+        let count = 0;
+        for (let item in cart) {
+            count += cart[item].qty;
+            total += (cart[item].price * cart[item].qty);
         }
-        if (totalItems > 0) {
+        if (count > 0) {
             btn.style.display = 'block';
-            btn.innerText = `PESAN (${totalItems} ITEM) - RP ${totalHarga.toLocaleString('id-ID')}`;
+            btn.innerText = `PESAN (${count} ITEM) - RP ${total.toLocaleString()}`;
         }
     }
 
-    function bukaQRIS() {
-        const name = document.getElementById('customerName').value.trim();
-        if (!name) { 
-            alert("Harap masukkan Nama Pemesan!"); 
-            return; 
-        }
-
-        let totalHarga = 0;
-        let rincianHTML = "";
-        for (let key in keranjang) {
-            let sub = keranjang[key].harga * keranjang[key].qty;
-            totalHarga += sub;
-            rincianHTML += `<b>${key}</b> x${keranjang[key].qty}<br><i>Catatan: ${keranjang[key].note || '-'}</i><br><br>`;
-        }
-
-        document.getElementById('displayTotal').innerText = `Total: Rp ${totalHarga.toLocaleString('id-ID')}`;
-        document.getElementById('rincianPesanan').innerHTML = `<b>Atas Nama: ${name}</b><br><br>${rincianHTML}`;
-        document.getElementById('modalQRIS').style.display = 'flex';
+    function showQRIS() {
+        let name = document.getElementById('customerName').value;
+        if(!name) { alert("Masukkan nama pemesan!"); return; }
+        
+        let total = 0;
+        for (let item in cart) { total += (cart[item].price * cart[item].qty); }
+        
+        document.getElementById('orderTotal').innerText = `Total: Rp ${total.toLocaleString()}`;
+        document.getElementById('qrisModal').style.display = 'flex';
     }
 
-    function kirimKeBot() {
-        const name = document.getElementById('customerName').value;
-        let listPesanan = [];
-        let totalHarga = 0;
-        let teksBot = `👤 *PEMESAN*: ${name}\n\n`;
+    function sendToBot() {
+        let name = document.getElementById('customerName').value;
+        let teks = `👤 *PEMESAN*: ${name}\n\n`;
+        let grandTotal = 0;
 
-        for (let key in keranjang) {
-            let sub = keranjang[key].harga * keranjang[key].qty;
-            listPesanan.push({ name: key, qty: keranjang[key].qty, harga: keranjang[key].harga, note: keranjang[key].note });
-            totalHarga += sub;
-            teksBot += `🔹 *${key}* (x${keranjang[key].qty})\n   Catatan: ${keranjang[key].note || '-'}\n\n`;
+        for (let item in cart) {
+            let sub = cart[item].price * cart[item].qty;
+            grandTotal += sub;
+            teks += `🔹 *${item}* (x${cart[item].qty})\n`;
+            teks += `   Catatan: ${cart[item].note || '-'}\n\n`;
         }
-        teksBot += `--------------------------\n*TOTAL BAYAR: Rp ${totalHarga.toLocaleString('id-ID')}*`;
-
-        // Kirim teks langsung agar bot python mudah membacanya
-        tg.sendData(teksBot);
+        teks += `--------------------------\n*TOTAL: Rp ${grandTotal.toLocaleString()}*`;
+        
+        tg.sendData(teks);
         tg.close();
     }
 </script>
