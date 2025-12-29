@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Professional Menu</title>
+    <title>Lucky Kue Sus - Digital Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; --danger: #e74c3c; }
@@ -22,8 +22,6 @@
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
         .btn-loc { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        
-        /* Modal & Buttons */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
         .qris-img { width: 100%; max-width: 220px; border-radius: 12px; margin: 15px 0; border: 1px solid #eee; }
@@ -88,9 +86,7 @@
         <h3 style="margin:0;">Struk Pesanan Lucky</h3>
         <div id="rincianFinal" class="summary-list"></div>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
-        
         <button class="btn-pay" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
-        
         <button class="btn-back" onclick="document.getElementById('paymentModal').style.display='none'">KEMBALI KE MENU UTAMA</button>
     </div>
 </div>
@@ -139,7 +135,15 @@
         let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama Pemesan!");
         
+        // --- LOGIKA RESI OTOMATIS (TAHUN & BULAN) ---
         const sekarang = new Date();
+        const tahun = sekarang.getFullYear();
+        const bulan = String(sekarang.getMonth() + 1).padStart(2, '0'); // Ambil bulan 01-12
+        const kodeUnik = Date.now().toString().slice(-4); // 4 angka unik terakhir waktu
+        
+        let resiId = `LKU-${tahun}-${bulan}-${kodeUnik}`;
+        // ------------------------------------------
+
         const opsi = { 
             timeZone: 'Asia/Jakarta', 
             year: 'numeric', month: 'long', day: 'numeric', 
@@ -147,7 +151,6 @@
         };
         const waktuPesan = sekarang.toLocaleString('id-ID', opsi);
 
-        let resiId = "LC-" + Date.now();
         let html = `<b>No. Resi: ${resiId}</b><br>`;
         html += `<small>Waktu: ${waktuPesan}</small><br><hr style="border:0.5px dashed #ccc">`;
         html += `<b>Pemesan: ${name}</b><br><br>`;
