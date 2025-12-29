@@ -56,9 +56,23 @@
         }
 
         function checkout() {
+            if (cart.length === 0) return;
+
+            // Fitur Grouping: Menggabungkan item yang sama (Contoh: Sus Vanila x4)
+            const groupedCart = cart.reduce((acc, item) => {
+                const existing = acc.find(i => i.name === item.name);
+                if (existing) {
+                    existing.quantity += 1;
+                } else {
+                    acc.push({ name: item.name, price: item.price, quantity: 1 });
+                }
+                return acc;
+            }, []);
+
             const totalHarga = cart.reduce((s, i) => s + i.price, 0);
+
             tg.sendData(JSON.stringify({
-                items: cart,
+                items: groupedCart,
                 total: totalHarga
             }));
             tg.close();
