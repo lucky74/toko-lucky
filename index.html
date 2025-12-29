@@ -7,50 +7,50 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --success: #27ae60; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 80px; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; }
-        
+        body { font-family: sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 90px; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .container { padding: 15px; }
-        .card { background: white; border-radius: 12px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Ukuran Foto Produk */
-        .card img { width: 80px; height: 80px; object-fit: cover; border-radius: 10px; margin-right: 15px; }
-        
+        /* Kartu Produk */
+        .card { background: white; border-radius: 15px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .card img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; margin-right: 15px; }
         .info { flex-grow: 1; }
-        .info strong { display: block; font-size: 1rem; }
-        .price { color: var(--success); font-weight: bold; }
+        .info strong { font-size: 1.1rem; display: block; color: var(--dark); }
+        .price { color: var(--success); font-weight: bold; font-size: 1rem; margin-top: 5px; display: block; }
         
-        .btn-add { background: var(--primary); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #eee; }
-        .btn-checkout { background: var(--success); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; display: none; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        /* Style Modal QRIS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 90%; max-width: 350px; padding: 20px; border-radius: 20px; text-align: center; }
-        .qris-img { width: 100%; max-width: 250px; margin: 15px 0; border: 1px solid #ddd; }
-        .btn-close { background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 10px; margin-top: 10px; font-weight: bold; }
+        /* Footer & Tombol Pesan */
+        .footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #ddd; box-sizing: border-box; }
+        .btn-checkout { background: var(--success); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; display: none; cursor: pointer; }
+
+        /* Modal QRIS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; position: relative; }
+        .qris-frame { background: #fff; padding: 10px; border-radius: 15px; border: 2px solid #eee; margin: 15px 0; }
+        .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
+        .btn-done { background: var(--dark); color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>Lucky Kue Sus 🥐</h1>
-    <p>Menu Fresh & Lezat</p>
+    <p>Lezat • Segar • Higienis</p>
 </header>
 
 <div class="container">
     <div class="card">
-        <img src="https://i.ibb.co/gb5SHqLk/strawberry.jpg" alt="Sus Strawberry">
+        <img src="https://ibb.co.com/gb5SHqLk" alt="Strawberry">
         <div class="info">
-            <strong>Sus Strawberry Cream</strong>
+            <strong>Sus Strawberry</strong>
             <span class="price">Rp 7.000</span>
         </div>
         <button class="btn-add" onclick="add('Sus Strawberry', 7000)">+ Tambah</button>
     </div>
 
     <div class="card">
-        <img src="https://i.ibb.co/cc0hvrb2/coklat.jpg" alt="Sus Coklat">
+        <img src="https://ibb.co.com/cc0hvrb2" alt="Coklat">
         <div class="info">
             <strong>Sus Coklat Lumer</strong>
             <span class="price">Rp 6.500</span>
@@ -59,7 +59,7 @@
     </div>
 
     <div class="card">
-        <img src="https://i.ibb.co/xSrKb96L/keju.jpg" alt="Sus Keju">
+        <img src="https://ibb.co.com/xSrKb96L" alt="Keju">
         <div class="info">
             <strong>Sus Keju Gurih</strong>
             <span class="price">Rp 7.500</span>
@@ -74,12 +74,16 @@
 
 <div id="qrisModal" class="modal">
     <div class="modal-content">
-        <h3>Pembayaran QRIS</h3>
-        <p>Silakan scan untuk membayar pesanan <strong>Lucky</strong></p>
-        <img src="https://i.ibb.co/ML5ccHT/qris.jpg" class="qris-img" alt="QRIS">
-        <div id="summary" style="text-align: left; margin-bottom: 15px; font-size: 0.9rem;"></div>
-        <h4 id="totalTagihan"></h4>
-        <button class="btn-close" onclick="finish()">Selesai & Tutup</button>
+        <h2 style="margin:0;">Total Pembayaran</h2>
+        <div id="qrisSummary" style="margin-top:15px; text-align:left; font-size:0.9rem; border-bottom:1px dashed #ddd; padding-bottom:10px;"></div>
+        <h3 id="qrisTotal" style="color:var(--success); margin:15px 0;"></h3>
+        
+        <div class="qris-frame">
+            <img src="https://ibb.co.com/ML5ccHT" alt="QRIS Lucky">
+        </div>
+        
+        <p style="font-size:0.8rem; color:#777;">Silakan scan QRIS di atas.<br>Pesanan akan diproses otomatis.</p>
+        <button class="btn-done" onclick="finish()">Selesai & Tutup</button>
     </div>
 </div>
 
@@ -90,14 +94,20 @@
 
     function add(name, price) {
         cart.push({name, price});
+        updateFooter();
+    }
+
+    function updateFooter() {
         const btn = document.getElementById('btnOrder');
-        btn.style.display = 'block';
-        const total = cart.reduce((s, i) => s + i.price, 0);
-        btn.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+        if (cart.length > 0) {
+            btn.style.display = 'block';
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            btn.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+        }
     }
 
     function checkout() {
-        // Grouping Item
+        // Grouping Item (x1, x2, dst)
         const grouped = cart.reduce((acc, item) => {
             const found = acc.find(i => i.name === item.name);
             if (found) { found.qty++; } 
@@ -106,16 +116,16 @@
         }, []);
 
         const totalHarga = cart.reduce((s, i) => s + i.price, 0);
-        
-        // Tampilkan Rincian di Modal
+
+        // Isi Rincian di Modal
         let summaryHTML = "";
         grouped.forEach(i => {
-            summaryHTML += `• ${i.name} x${i.qty} (Rp ${(i.price * i.qty).toLocaleString()})<br>`;
+            summaryHTML += `• ${i.name} x${i.qty}<br>`;
         });
-        document.getElementById('summary').innerHTML = summaryHTML;
-        document.getElementById('totalTagihan').innerText = `Total: Rp ${totalHarga.toLocaleString()}`;
+        document.getElementById('qrisSummary').innerHTML = summaryHTML;
+        document.getElementById('qrisTotal').innerText = `Total Tagihan: Rp ${totalHarga.toLocaleString()}`;
 
-        // Munculkan Modal QRIS
+        // Tampilkan Modal
         document.getElementById('qrisModal').style.display = 'flex';
 
         // Kirim data ke Bot
