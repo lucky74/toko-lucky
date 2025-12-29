@@ -3,137 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus</title>
+    <title>Lucky Kue Sus - Digital Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --primary: #f39c12; --dark: #2c3e50; --success: #27ae60; }
-        body { font-family: sans-serif; margin: 0; background: #f4f4f4; padding-bottom: 90px; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .container { padding: 15px; }
+        :root {
+            --primary: #f39c12;
+            --dark: #2c3e50;
+            --light-bg: #fdfaf5;
+            --success: #27ae60;
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; 
+            background-color: var(--light-bg); color: #333; padding-bottom: 100px;
+        }
+        .header {
+            height: 150px;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://i.ibb.co.com/8gTtWvPk/image.jpg');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; text-align: center; border-bottom: 5px solid var(--primary);
+        }
+        .name-section { padding: 15px; background: white; margin: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .name-section input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
         
-        /* Kartu Produk */
-        .card { background: white; border-radius: 15px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; margin-right: 15px; }
-        .info { flex-grow: 1; }
-        .info strong { font-size: 1.1rem; display: block; color: var(--dark); }
-        .price { color: var(--success); font-weight: bold; font-size: 1rem; margin-top: 5px; display: block; }
-        
-        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .menu-grid { padding: 10px; }
+        .menu-card { 
+            background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden;
+            display: flex; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .menu-img { width: 110px; height: 110px; object-fit: cover; }
+        .menu-info { padding: 12px; flex: 1; position: relative; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .menu-price { color: var(--success); font-weight: bold; margin: 5px 0; }
+        .note-input { width: 80%; padding: 5px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
+        .add-btn { 
+            position: absolute; right: 15px; bottom: 15px; 
+            background: var(--primary); color: white; border: none; 
+            width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer;
+        }
 
-        /* Footer & Tombol Pesan */
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: white; border-top: 1px solid #ddd; box-sizing: border-box; }
-        .btn-checkout { background: var(--success); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: bold; display: none; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 2px solid var(--primary); box-sizing: border-box; }
+        .btn-order { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; display: none; cursor: pointer; }
 
-        /* Modal QRIS */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; position: relative; }
-        .qris-frame { background: #fff; padding: 10px; border-radius: 15px; border: 2px solid #eee; margin: 15px 0; }
-        .qris-frame img { width: 100%; height: auto; display: block; border-radius: 10px; }
-        .btn-done { background: var(--dark); color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        /* MODAL QRIS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 85%; max-width: 350px; padding: 20px; border-radius: 20px; text-align: center; }
+        .qris-img { width: 100%; border-radius: 10px; margin: 15px 0; }
+        .btn-close { background: var(--dark); color: white; width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Lucky Kue Sus 🥐</h1>
-    <p>Lezat • Segar • Higienis</p>
-</header>
+<div class="header">
+    <h1 style="margin:0;">Lucky Kue Sus</h1>
+    <p style="margin:5px 0;">Freshly Baked Daily</p>
+</div>
 
-<div class="container">
-    <div class="card">
-        <img src="https://ibb.co.com/gb5SHqLk" alt="Strawberry">
-        <div class="info">
-            <strong>Sus Strawberry</strong>
-            <span class="price">Rp 7.000</span>
+<div class="name-section">
+    <label style="font-size: 0.8rem; font-weight: bold;">NAMA PEMESAN:</label>
+    <input type="text" id="customerName" placeholder="Masukkan nama Anda...">
+</div>
+
+<div class="menu-grid">
+    <div class="menu-card">
+        <img src="https://ibb.co.com/gb5SHqLk" class="menu-img">
+        <div class="menu-info">
+            <p class="menu-title">Sus Strawberry</p>
+            <p class="menu-price">7.000</p>
+            <input type="text" class="note-input" id="note-strawberry" placeholder="Catatan...">
+            <button class="add-btn" onclick="tambahItem('Sus Strawberry', 7000, 'note-strawberry')">+</button>
         </div>
-        <button class="btn-add" onclick="add('Sus Strawberry', 7000)">+ Tambah</button>
     </div>
 
-    <div class="card">
-        <img src="https://ibb.co.com/cc0hvrb2" alt="Coklat">
-        <div class="info">
-            <strong>Sus Coklat Lumer</strong>
-            <span class="price">Rp 6.500</span>
+    <div class="menu-card">
+        <img src="https://ibb.co.com/cc0hvrb2" class="menu-img">
+        <div class="menu-info">
+            <p class="menu-title">Sus Coklat Lumer</p>
+            <p class="menu-price">6.500</p>
+            <input type="text" class="note-input" id="note-coklat" placeholder="Catatan...">
+            <button class="add-btn" onclick="tambahItem('Sus Coklat', 6500, 'note-coklat')">+</button>
         </div>
-        <button class="btn-add" onclick="add('Sus Coklat', 6500)">+ Tambah</button>
     </div>
 
-    <div class="card">
-        <img src="https://ibb.co.com/xSrKb96L" alt="Keju">
-        <div class="info">
-            <strong>Sus Keju Gurih</strong>
-            <span class="price">Rp 7.500</span>
+    <div class="menu-card">
+        <img src="https://ibb.co.com/xSrKb96L" class="menu-img">
+        <div class="menu-info">
+            <p class="menu-title">Sus Keju Gurih</p>
+            <p class="menu-price">7.500</p>
+            <input type="text" class="note-input" id="note-keju" placeholder="Catatan...">
+            <button class="add-btn" onclick="tambahItem('Sus Keju', 7500, 'note-keju')">+</button>
         </div>
-        <button class="btn-add" onclick="add('Sus Keju', 7500)">+ Tambah</button>
     </div>
 </div>
 
 <div class="footer">
-    <button id="btnOrder" class="btn-checkout" onclick="checkout()"></button>
+    <button id="btnOrder" class="btn-order" onclick="bukaQRIS()">PESAN SEKARANG</button>
 </div>
 
-<div id="qrisModal" class="modal">
+<div id="modalQRIS" class="modal">
     <div class="modal-content">
-        <h2 style="margin:0;">Total Pembayaran</h2>
-        <div id="qrisSummary" style="margin-top:15px; text-align:left; font-size:0.9rem; border-bottom:1px dashed #ddd; padding-bottom:10px;"></div>
-        <h3 id="qrisTotal" style="color:var(--success); margin:15px 0;"></h3>
-        
-        <div class="qris-frame">
-            <img src="https://ibb.co.com/ML5ccHT" alt="QRIS Lucky">
-        </div>
-        
-        <p style="font-size:0.8rem; color:#777;">Silakan scan QRIS di atas.<br>Pesanan akan diproses otomatis.</p>
-        <button class="btn-done" onclick="finish()">Selesai & Tutup</button>
+        <h2 style="margin:0;">Pembayaran QRIS</h2>
+        <p id="displayTotal" style="color:var(--success); font-weight:bold; font-size:1.2rem;"></p>
+        <img src="https://ibb.co.com/ML5ccHT" class="qris-img">
+        <div id="rincianPesanan" style="text-align:left; font-size:0.8rem; margin-bottom:15px; border-top:1px dashed #ddd; padding-top:10px;"></div>
+        <button class="btn-close" onclick="kirimKeBot()">Sudah Bayar & Tutup</button>
     </div>
 </div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
-    let cart = [];
+    let keranjang = {};
 
-    function add(name, price) {
-        cart.push({name, price});
+    function tambahItem(nama, harga, idNote) {
+        const catatan = document.getElementById(idNote).value;
+        if (!keranjang[nama]) {
+            keranjang[nama] = { harga: harga, qty: 1, note: catatan };
+        } else {
+            keranjang[nama].qty += 1;
+            if(catatan) keranjang[nama].note = catatan;
+        }
         updateFooter();
     }
 
     function updateFooter() {
         const btn = document.getElementById('btnOrder');
-        if (cart.length > 0) {
+        let totalItems = 0;
+        let totalHarga = 0;
+        for (let key in keranjang) {
+            totalItems += keranjang[key].qty;
+            totalHarga += (keranjang[key].harga * keranjang[key].qty);
+        }
+        if (totalItems > 0) {
             btn.style.display = 'block';
-            const total = cart.reduce((s, i) => s + i.price, 0);
-            btn.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+            btn.innerText = `PESAN (${totalItems} ITEM) - RP ${totalHarga.toLocaleString()}`;
         }
     }
 
-    function checkout() {
-        // Grouping Item (x1, x2, dst)
-        const grouped = cart.reduce((acc, item) => {
-            const found = acc.find(i => i.name === item.name);
-            if (found) { found.qty++; } 
-            else { acc.push({name: item.name, price: item.price, qty: 1}); }
-            return acc;
-        }, []);
+    function bukaQRIS() {
+        const name = document.getElementById('customerName').value;
+        if (!name) { alert("Masukkan Nama Pemesan dulu ya!"); return; }
 
-        const totalHarga = cart.reduce((s, i) => s + i.price, 0);
+        let totalHarga = 0;
+        let rincianHTML = "";
+        for (let key in keranjang) {
+            let sub = keranjang[key].harga * keranjang[key].qty;
+            totalHarga += sub;
+            rincianHTML += `• ${key} x${keranjang[key].qty} (Rp ${sub.toLocaleString()})<br><i>Catatan: ${keranjang[key].note || '-'}</i><br>`;
+        }
 
-        // Isi Rincian di Modal
-        let summaryHTML = "";
-        grouped.forEach(i => {
-            summaryHTML += `• ${i.name} x${i.qty}<br>`;
-        });
-        document.getElementById('qrisSummary').innerHTML = summaryHTML;
-        document.getElementById('qrisTotal').innerText = `Total Tagihan: Rp ${totalHarga.toLocaleString()}`;
-
-        // Tampilkan Modal
-        document.getElementById('qrisModal').style.display = 'flex';
-
-        // Kirim data ke Bot
-        tg.sendData(JSON.stringify({items: grouped, total: totalHarga}));
+        document.getElementById('displayTotal').innerText = `Total: Rp ${totalHarga.toLocaleString()}`;
+        document.getElementById('rincianPesanan').innerHTML = `<b>Pemesan: ${name}</b><br><br>${rincianHTML}`;
+        document.getElementById('modalQRIS').style.display = 'flex';
     }
 
-    function finish() {
-        document.getElementById('qrisModal').style.display = 'none';
+    function kirimKeBot() {
+        const name = document.getElementById('customerName').value;
+        let listPesanan = [];
+        let totalHarga = 0;
+
+        for (let key in keranjang) {
+            listPesanan.push({ name: key, qty: keranjang[key].qty, harga: keranjang[key].harga, note: keranjang[key].note });
+            totalHarga += (keranjang[key].harga * keranjang[key].qty);
+        }
+
+        tg.sendData(JSON.stringify({
+            pembeli: name,
+            items: listPesanan,
+            total: totalHarga
+        }));
         tg.close();
     }
 </script>
