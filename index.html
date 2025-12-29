@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Premium</title>
+    <title>Lucky Kue Sus - Kurir Tracking</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
@@ -35,8 +35,8 @@
     <div class="box">
         <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
         <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
-        <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR & ESTIMASI</button>
-        <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Terdeteksi</div>
+        <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR & LOKASI SAYA</button>
+        <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Dikunci untuk Kurir</div>
     </div>
 
     <div class="menu-card">
@@ -44,8 +44,8 @@
         <div class="menu-details">
             <p class="menu-title">Sus Strawberry</p>
             <span class="menu-price">Rp 7.000</span>
-            <input type="text" class="note-input" id="note_Sus_Strawberry" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note_Sus_Strawberry')">+</button>
+            <input type="text" class="note-input" id="note1" placeholder="Catatan...">
+            <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note1')">+</button>
         </div>
     </div>
 
@@ -54,8 +54,8 @@
         <div class="menu-details">
             <p class="menu-title">Sus Coklat Lumer</p>
             <span class="menu-price">Rp 6.500</span>
-            <input type="text" class="note-input" id="note_Sus_Coklat" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Coklat Lumer', 6500, 'note_Sus_Coklat')">+</button>
+            <input type="text" class="note-input" id="note2" placeholder="Catatan...">
+            <button class="add-btn" onclick="add('Sus Coklat Lumer', 6500, 'note2')">+</button>
         </div>
     </div>
 
@@ -64,8 +64,8 @@
         <div class="menu-details">
             <p class="menu-title">Sus Keju Gurih</p>
             <span class="menu-price">Rp 7.500</span>
-            <input type="text" class="note-input" id="note_Sus_Keju" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Keju Gurih', 7500, 'note_Sus_Keju')">+</button>
+            <input type="text" class="note-input" id="note3" placeholder="Catatan...">
+            <button class="add-btn" onclick="add('Sus Keju Gurih', 7500, 'note3')">+</button>
         </div>
     </div>
 </div>
@@ -88,22 +88,27 @@
     tg.expand();
     let cart = {};
     let ongkir = 0, jarakGlobal = 0, estimasiWaktu = 0;
+    let userLat = 0, userLon = 0; // Tambahkan variabel koordinat
     const TOKO_LAT = -6.40248, TOKO_LON = 106.79424;
 
     function ambilLokasi() {
-        document.getElementById('btnGetLoc').innerText = "📍 Menghitung...";
+        document.getElementById('btnGetLoc').innerText = "📍 Mengunci GPS...";
         navigator.geolocation.getCurrentPosition(pos => {
-            const lat = pos.coords.latitude, lon = pos.coords.longitude, R = 6371;
-            const dLat = (lat - TOKO_LAT) * Math.PI / 180, dLon = (lon - TOKO_LON) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            const R = 6371;
+            const dLat = (userLat - TOKO_LAT) * Math.PI / 180, dLon = (userLon - TOKO_LON) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(userLat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
             jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
             ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
             ongkir += 2000;
             estimasiWaktu = Math.round((jarakGlobal / 30 * 60) + 10);
+            
             document.getElementById('statusLokasi').style.display = 'block';
             document.getElementById('btnGetLoc').style.display = 'none';
             updateUI();
-        }, () => alert("Aktifkan GPS!"));
+        }, () => alert("Wajib Aktifkan GPS untuk kirim pesanan!"));
     }
 
     function add(name, price, noteId) {
@@ -135,8 +140,21 @@
             teksBot += `🔹 *${x}* (x${cart[x].qty})\n   _Catatan: ${note}_\n\n`;
         }
         let total = totalKue + ongkir;
+        
+        // Link Google Maps untuk Kurir
+        let gmapsLink = `https://www.google.com/maps?q=${userLat},${userLon}`;
+        
         html += `<hr>🛵 Jarak: ${jarakGlobal.toFixed(1)} km<br>⏳ Estimasi Tiba: ${estimasiWaktu} Menit<br><h3>TOTAL: Rp ${total.toLocaleString()}</h3>`;
-        teksBot += `--------------------------\n🛵 *INFO PENGIRIMAN*:\n📍 Jarak: ${jarakGlobal.toFixed(1)} km\n⏳ Estimasi Tiba: ${estimasiWaktu} Menit\n💰 Ongkir: Rp ${ongkir.toLocaleString()}\n💰 *GRAND TOTAL: Rp ${total.toLocaleString()}*\n\n✅ STATUS: SUDAH BAYAR LUNAS`;
+        
+        // Tambahkan Info Kurir ke teksBot
+        teksBot += `--------------------------\n`;
+        teksBot += `🛵 *INFO KURIR*:\n`;
+        teksBot += `📍 Jarak: ${jarakGlobal.toFixed(1)} km\n`;
+        teksBot += `⏳ Estimasi Tiba: ${estimasiWaktu} Menit\n`;
+        teksBot += `💰 Ongkir: Rp ${ongkir.toLocaleString()}\n`;
+        teksBot += `💰 *GRAND TOTAL: Rp ${total.toLocaleString()}*\n\n`;
+        teksBot += `📍 *LOKASI PENGIRIMAN (Klik Link)*:\n${gmapsLink}\n\n`;
+        teksBot += `✅ STATUS: SUDAH BAYAR LUNAS`;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-teks', teksBot);
