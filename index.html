@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Premium</title>
+    <title>Lucky Kue Sus - Audit System</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
@@ -11,25 +11,17 @@
         .header { height: 160px; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 4px solid var(--primary); }
         .container { padding: 15px; }
         .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        /* Menu Style */
         .menu-card { background: white; border-radius: 15px; margin-bottom: 15px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .menu-img { width: 110px; height: 110px; object-fit: cover; }
         .menu-details { padding: 12px; flex: 1; position: relative; }
         .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
-        .menu-price { color: var(--success); font-weight: bold; display: block; margin: 5px 0; }
+        .menu-price { color: var(--success); font-weight: bold; display: block; margin: 4px 0; }
         .note-input { width: 85%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
         .add-btn { position: absolute; right: 15px; bottom: 15px; background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; }
-        
-        /* Footer Info (Permintaan Anda) */
         .sgo-footer { text-align: center; font-size: 11px; color: #aaa; margin: 20px 0; padding-bottom: 10px; }
-
-        /* Floating Button Footer */
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
         .btn-loc { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
-
-        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
         .qris-img { width: 100%; max-width: 220px; border-radius: 12px; margin: 15px 0; border: 1px solid #eee; }
@@ -79,7 +71,7 @@
     </div>
 
     <div class="sgo-footer">
-        Lucky Digital Menu | Sentra Guest OS &copy 2025 - SGO V1.0
+        Lucky Digital Menu | Sentra Guest OS @ 2025 - SGO V1.0
     </div>
 </div>
 
@@ -89,11 +81,10 @@
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin:0;">Konfirmasi & Pembayaran</h3>
+        <h3 style="margin:0;">Struk Audit Lucky</h3>
         <div id="rincianFinal" class="summary-list"></div>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
         <button style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
-        <button style="background:none; border:none; color:#888; margin-top:10px; cursor:pointer;" onclick="document.getElementById('paymentModal').style.display='none'">Kembali</button>
     </div>
 </div>
 
@@ -108,8 +99,7 @@
     function ambilLokasi() {
         document.getElementById('btnGetLoc').innerText = "📍 Mengunci GPS...";
         navigator.geolocation.getCurrentPosition(pos => {
-            userLat = pos.coords.latitude;
-            userLon = pos.coords.longitude;
+            userLat = pos.coords.latitude; userLon = pos.coords.longitude;
             const R = 6371;
             const dLat = (userLat - TOKO_LAT) * Math.PI / 180, dLon = (userLon - TOKO_LON) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(userLat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
@@ -141,8 +131,23 @@
     function showPayment() {
         let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama!");
-        let html = `<b>Pemesan: ${name}</b><br><hr>`, totalKue = 0;
-        let teksBot = `👤 *PEMESAN*: ${name}\n📋 *RINCIAN PESANAN*:\n\n`;
+        
+        // --- LOGIKA TANGGAL & JAM OTOMATIS (WIB) ---
+        const sekarang = new Date();
+        const opsi = { 
+            timeZone: 'Asia/Jakarta', 
+            year: 'numeric', month: 'long', day: 'numeric', 
+            hour: '2-digit', minute: '2-digit', second: '2-digit' 
+        };
+        const waktuAudit = sekarang.toLocaleString('id-ID', opsi);
+        // ------------------------------------------
+
+        let html = `<b>No. Audit: LC-${Date.now()}</b><br>`;
+        html += `<small>Waktu: ${waktuAudit}</small><br><hr>`;
+        html += `<b>Pemesan: ${name}</b><br><br>`;
+        
+        let teksBot = `🆔 *NO. AUDIT*: LC-${Date.now()}\n📅 *WAKTU*: ${waktuAudit}\n👤 *PEMESAN*: ${name}\n📋 *RINCIAN*:\n\n`;
+        let totalKue = 0;
 
         for (let x in cart) {
             let note = document.getElementById(cart[x].noteId).value || "-";
@@ -151,12 +156,13 @@
             html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br><small>Note: ${note}</small><br><br>`;
             teksBot += `🔹 *${x}* (x${cart[x].qty})\n   _Catatan: ${note}_\n\n`;
         }
+        
         let total = totalKue + ongkir;
         let gmapsLink = `https://www.google.com/maps?q=${userLat},${userLon}`;
         
-        html += `<hr>🛵 Jarak: ${jarakGlobal.toFixed(1)} km<br>⏳ Estimasi Tiba: ${estimasiWaktu} Menit<br><h3>TOTAL: Rp ${total.toLocaleString()}</h3>`;
+        html += `<hr>🛵 Jarak: ${jarakGlobal.toFixed(1)} km<br>⏳ Estimasi: ${estimasiWaktu} Menit<br><h3>TOTAL: Rp ${total.toLocaleString()}</h3>`;
         
-        teksBot += `--------------------------\n🛵 *INFO KURIR*:\n📍 Jarak: ${jarakGlobal.toFixed(1)} km\n⏳ Estimasi Tiba: ${estimasiWaktu} Menit\n💰 Ongkir: Rp ${ongkir.toLocaleString()}\n💰 *GRAND TOTAL: Rp ${total.toLocaleString()}*\n\n📍 *LOKASI PENGIRIMAN (Klik Link)*:\n${gmapsLink}\n\n✅ STATUS: SUDAH BAYAR LUNAS`;
+        teksBot += `--------------------------\n🛵 *INFO PENGANTARAN*:\n📍 Jarak: ${jarakGlobal.toFixed(1)} km\n⏳ Estimasi Tiba: ${estimasiWaktu} Menit\n💰 Ongkir: Rp ${ongkir.toLocaleString()}\n💰 *GRAND TOTAL: Rp ${total.toLocaleString()}*\n\n📍 *LOKASI KURIR*:\n${gmapsLink}\n\n✅ STATUS: LUNAS & TER-AUDIT`;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-teks', teksBot);
