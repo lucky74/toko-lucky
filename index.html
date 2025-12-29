@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - All-in-One Payment</title>
+    <title>Lucky Kue Sus - Luxury Digital Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
@@ -11,50 +11,94 @@
         .header { height: 160px; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: white; border-bottom: 4px solid var(--primary); }
         .container { padding: 15px; }
         .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .menu-card { background: white; border-radius: 15px; margin-bottom: 12px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
-        .menu-img { width: 100px; height: 100px; object-fit: cover; }
-        .menu-details { padding: 10px; flex: 1; position: relative; }
-        .btn-loc { background: var(--dark); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
-        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 15px; border-top: 1px solid #eee; box-sizing: border-box; }
-        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-weight: bold; display: none; }
+        
+        /* Menu Cards */
+        .menu-card { background: white; border-radius: 15px; margin-bottom: 15px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .menu-img { width: 110px; height: 110px; object-fit: cover; }
+        .menu-details { padding: 12px; flex: 1; position: relative; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; color: var(--dark); }
+        .menu-price { color: var(--success); font-weight: bold; margin: 5px 0; display: block; }
+        .note-input { width: 85%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; background: #fafafa; }
+        .add-btn { position: absolute; right: 15px; bottom: 15px; background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; }
+
+        /* Footer & Buttons */
+        .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 100; }
+        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
+        .btn-loc { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+
+        /* Modal Payment */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 90%; max-width: 380px; padding: 20px; border-radius: 20px; text-align: center; max-height: 90vh; overflow-y: auto; }
-        .qris-img { width: 100%; max-width: 200px; margin: 10px 0; border: 1px solid #ddd; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
+        .qris-img { width: 100%; max-width: 220px; border-radius: 12px; margin: 15px 0; border: 1px solid #eee; }
+        .summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; border: 1px dashed #ccc; }
     </style>
 </head>
 <body>
 
-<div class="header"><h1>Lucky Kue Sus</h1></div>
+<div class="header">
+    <div style="text-align:center;">
+        <h1 style="margin:0;">Lucky Kue Sus</h1>
+        <p style="margin:5px 0; letter-spacing: 1px;">PREMIUM & FRESHLY BAKED</p>
+    </div>
+</div>
 
 <div class="container">
     <div class="box">
-        <label style="font-size:0.8rem; font-weight:bold;">1. NAMA PEMESAN:</label>
-        <input type="text" id="customerName" style="width:100%; padding:10px; margin-top:5px; border:1px solid #ddd; border-radius:8px;" placeholder="Tulis nama Anda...">
+        <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
+        <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
         
-        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-top:10px;">2. LOKASI PENGIRIMAN:</label>
+        <label style="font-size:0.85rem; font-weight:bold; display:block; margin-top:15px;">LOKASI PENGIRIMAN:</label>
         <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR OTOMATIS</button>
-        <div id="statusLokasi" style="font-size:0.75rem; color:var(--success); margin-top:5px; display:none;">✅ Lokasi Terdeteksi</div>
+        <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Terdeteksi & Ongkir Dihitung</div>
     </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
-        <div class="menu-details">
-            <strong>Sus Strawberry</strong><br>
-            <span style="color:var(--success); font-weight:bold;">Rp 7.000</span>
-            <input type="text" style="width:80%; font-size:0.7rem;" id="n1" placeholder="Catatan...">
-            <button style="position:absolute; right:10px; bottom:10px;" onclick="add('Sus Strawberry', 7000, 'n1')">+</button>
+    <div id="menuItems">
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Strawberry</p>
+                <span class="menu-price">Rp 7.000</span>
+                <input type="text" class="note-input" id="note1" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note1')">+</button>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Coklat Lumer</p>
+                <span class="menu-price">Rp 6.500</span>
+                <input type="text" class="note-input" id="note2" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Coklat', 6500, 'note2')">+</button>
+            </div>
+        </div>
+
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/Resep-Kue-Sus-Premium-dengan-Mentega-Wijsman-di-Blog.tokowahab.com_.png" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Keju Gurih</p>
+                <span class="menu-price">Rp 7.500</span>
+                <input type="text" class="note-input" id="note3" placeholder="Catatan...">
+                <button class="add-btn" onclick="add('Sus Keju', 7500, 'note3')">+</button>
+            </div>
         </div>
     </div>
-    </div>
+</div>
 
-<div class="footer"><button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & BAYAR SEKARANG</button></div>
+<div class="footer">
+    <button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & BAYAR SEKARANG</button>
+</div>
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3>Struk Pembayaran Lucky</h3>
-        <div id="rincianList" style="text-align:left; background:#f9f9f9; padding:15px; border-radius:10px; font-size:0.85rem;"></div>
+        <h3 style="margin:0;">Konfirmasi Pesanan</h3>
+        <div id="rincianFinal" class="summary-list"></div>
+        
+        <p style="font-size:0.85rem; color:#444; margin-bottom:5px;">Silakan Scan QRIS Lucky:</p>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
-        <button style="background:var(--success); color:white; width:100%; padding:14px; border:none; border-radius:10px; font-weight:bold;" onclick="sendToBot()">KONFIRMASI PEMBAYARAN ✓</button>
+        
+        <button style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; font-size:1.1rem; cursor:pointer;" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
+        <button style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;" onclick="document.getElementById('paymentModal').style.display='none'">Kembali</button>
     </div>
 </div>
 
@@ -65,24 +109,20 @@
     let ongkir = 0;
     let jarakGlobal = 0;
 
-    // Koordinat Toko Lucky
     const TOKO_LAT = -6.40248;
     const TOKO_LON = 106.79424;
 
     function ambilLokasi() {
-        document.getElementById('btnGetLoc').innerText = "Sedang Menghitung...";
+        document.getElementById('btnGetLoc').innerText = "📍 Menghitung Jarak...";
         navigator.geolocation.getCurrentPosition(pos => {
-            let lat = pos.coords.latitude;
-            let lon = pos.coords.longitude;
-            
-            // Hitung Jarak
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
             const R = 6371;
             const dLat = (lat - TOKO_LAT) * Math.PI / 180;
             const dLon = (lon - TOKO_LON) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
             jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             
-            // Hitung Ongkir
             ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
             ongkir += 2000; // Biaya Layanan
 
@@ -104,30 +144,32 @@
         for (let x in cart) { count += cart[x].qty; total += (cart[x].price * cart[x].qty); }
         if (count > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
-            document.getElementById('btnOrder').innerText = `TOTAL BAYAR: RP ${(total + ongkir).toLocaleString()}`;
+            document.getElementById('btnOrder').innerText = `TOTAL BAYAR: RP ${(total + ongkir).toLocaleString('id-ID')}`;
         }
     }
 
     function showPayment() {
         let name = document.getElementById('customerName').value;
-        if(!name) return alert("Isi Nama Pemesan!");
+        if(!name) return alert("Harap isi Nama Pemesan!");
         
-        let html = `<b>Atas Nama: ${name}</b><br><hr>`, totalKue = 0;
+        let html = `<b>Atas Nama: ${name}</b><br><hr style='border:0.5px dashed #ccc'>`, totalKue = 0;
         for (let x in cart) {
             let sub = cart[x].price * cart[x].qty;
             totalKue += sub;
-            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br>`;
+            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br><small><i>Catatan: ${cart[x].note || '-'}</i></small><br><br>`;
         }
-        html += `<hr>• Subtotal Kue: Rp ${totalKue.toLocaleString()}<br>`;
-        html += `• Ongkir (${jarakGlobal.toFixed(1)}km): Rp ${ongkir.toLocaleString()}<br>`;
-        html += `<h3 style="color:var(--success);">GRAND TOTAL: Rp ${(totalKue + ongkir).toLocaleString()}</h3>`;
+        html += `<hr style='border:0.5px dashed #ccc'>`;
+        html += `Subtotal Kue: Rp ${totalKue.toLocaleString()}<br>`;
+        html += `Ongkir (${jarakGlobal.toFixed(1)} km): Rp ${ongkir.toLocaleString()}<br>`;
+        html += `<h3 style="color:var(--success); margin-top:10px;">TOTAL LUNAS: Rp ${(totalKue + ongkir).toLocaleString('id-ID')}</h3>`;
         
-        document.getElementById('rincianList').innerHTML = html;
+        document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
     function sendToBot() {
-        tg.sendData(document.getElementById('rincianList').innerText + "\n\n✅ PEMBAYARAN LUNAS VIA QRIS");
+        const struk = document.getElementById('rincianFinal').innerText;
+        tg.sendData(struk + "\n\n✅ STATUS: SUDAH BAYAR LUNAS (INC. ONGKIR)");
         tg.close();
     }
 </script>
