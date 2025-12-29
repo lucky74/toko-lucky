@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Kue Sus</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --primary: #f39c12; --dark: #2c3e50; }
+        body { font-family: sans-serif; margin: 0; background: #f8f9fa; padding-bottom: 80px; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 0 0 20px 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { padding: 15px; }
+        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .price { color: #27ae60; font-weight: bold; font-size: 0.9rem; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .footer { position: fixed; bottom: 0; width: 100%; padding: 15px; background: white; box-sizing: border-box; border-top: 1px solid #eee; }
+        .btn-checkout { background: #27ae60; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-size: 1rem; font-weight: bold; display: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lucky Kue Sus 🥐</h1>
+        <p>Menu Fresh & Lezat</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <div><strong>Sus Vanila Classic</strong><br><span class="price">Rp 5.000</span></div>
+            <button class="btn-add" onclick="add('Sus Vanila', 5000)">+ Tambah</button>
+        </div>
+        <div class="card">
+            <div><strong>Sus Coklat Lumer</strong><br><span class="price">Rp 6.500</span></div>
+            <button class="btn-add" onclick="add('Sus Coklat', 6500)">+ Tambah</button>
+        </div>
+        <div class="card">
+            <div><strong>Sus Buah Segar</strong><br><span class="price">Rp 7.500</span></div>
+            <button class="btn-add" onclick="add('Sus Buah', 7500)">+ Tambah</button>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button id="btnOrder" class="btn-checkout" onclick="checkout()"></button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        let cart = [];
+
+        function add(name, price) {
+            cart.push({name, price});
+            const btn = document.getElementById('btnOrder');
+            btn.style.display = 'block';
+            const total = cart.reduce((s, i) => s + i.price, 0);
+            btn.innerText = `Pesan (${cart.length} item) - Rp ${total.toLocaleString()}`;
+        }
+
+        function checkout() {
+            const totalHarga = cart.reduce((s, i) => s + i.price, 0);
+            tg.sendData(JSON.stringify({
+                items: cart,
+                total: totalHarga
+            }));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
