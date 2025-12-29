@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Kue Sus - Premium Menu</title>
+    <title>Lucky Kue Sus - All-in-One</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
@@ -15,7 +15,7 @@
         .menu-img { width: 110px; height: 110px; object-fit: cover; }
         .menu-details { padding: 12px; flex: 1; position: relative; }
         .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
-        .menu-price { color: var(--success); font-weight: bold; display: block; margin: 4px 0; }
+        .menu-price { color: var(--success); font-weight: bold; display: block; margin: 5px 0; }
         .note-input { width: 85%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
         .add-btn { position: absolute; right: 15px; bottom: 15px; background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; }
         .footer { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; }
@@ -76,7 +76,7 @@
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin:0;">Konfirmasi & Pembayaran</h3>
+        <h3 style="margin:0;">Rincian & Pembayaran</h3>
         <div id="rincianFinal" class="summary-list"></div>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
         <button style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
@@ -111,11 +111,8 @@
     }
 
     function add(name, price, noteId) {
-        if (!cart[name]) {
-            cart[name] = { price: price, qty: 1, noteId: noteId };
-        } else {
-            cart[name].qty++;
-        }
+        if (!cart[name]) { cart[name] = { price: price, qty: 1, noteId: noteId }; }
+        else { cart[name].qty++; }
         updateUI();
     }
 
@@ -130,31 +127,29 @@
 
     function showPayment() {
         let name = document.getElementById('customerName').value.trim();
-        if(!name) return alert("Isi Nama Pemesan!");
-        
+        if(!name) return alert("Isi Nama!");
         let html = `<b>Pemesan: ${name}</b><br><hr>`, totalKue = 0;
         let teksBot = `👤 *PEMESAN*: ${name}\n📋 *RINCIAN PESANAN*:\n\n`;
 
         for (let x in cart) {
-            let currentNote = document.getElementById(cart[x].noteId).value.trim() || "-";
+            let note = document.getElementById(cart[x].noteId).value || "-";
             let sub = cart[x].price * cart[x].qty;
             totalKue += sub;
-            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br><small>Catatan: ${currentNote}</small><br><br>`;
-            teksBot += `🔹 *${x}* (x${cart[x].qty})\n   _Catatan: ${currentNote}_\n\n`;
+            html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br><small>Note: ${note}</small><br><br>`;
+            teksBot += `🔹 *${x}* (x${cart[x].qty})\n   _Catatan: ${note}_\n\n`;
         }
-
-        let grandTotal = totalKue + ongkir;
-        html += `<hr>Subtotal: Rp ${totalKue.toLocaleString()}<br>Ongkir: Rp ${ongkir.toLocaleString()}<br><h3>TOTAL: Rp ${grandTotal.toLocaleString()}</h3>`;
-        teksBot += `--------------------------\nSubtotal Kue: Rp ${totalKue.toLocaleString()}\nOngkir: Rp ${ongkir.toLocaleString()}\n*GRAND TOTAL: Rp ${grandTotal.toLocaleString()}*\n\n✅ STATUS: BAYAR LUNAS`;
+        let total = totalKue + ongkir;
+        html += `<hr>Subtotal: Rp ${totalKue.toLocaleString()}<br>Ongkir: Rp ${ongkir.toLocaleString()}<br><h3>TOTAL: Rp ${total.toLocaleString()}</h3>`;
+        teksBot += `--------------------------\nSubtotal Kue: Rp ${totalKue.toLocaleString()}\nOngkir: Rp ${ongkir.toLocaleString()}\n*GRAND TOTAL: Rp ${total.toLocaleString()}*`;
         
         document.getElementById('rincianFinal').innerHTML = html;
-        document.getElementById('rincianFinal').setAttribute('data-bot-teks', teksBot);
+        document.getElementById('rincianFinal').setAttribute('data-teks', teksBot);
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
     function sendToBot() {
-        const teksFinal = document.getElementById('rincianFinal').getAttribute('data-bot-teks');
-        tg.sendData(teksFinal);
+        const t = document.getElementById('rincianFinal').getAttribute('data-teks');
+        tg.sendData(t + "\n✅ STATUS: SUDAH BAYAR LUNAS");
         tg.close();
     }
 </script>
