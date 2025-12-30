@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lucky Clicker Pro</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --primary: #f39c12; --secondary: #e67e22; --bg: #1a1a1a; }
+        body { 
+            background: radial-gradient(circle at center, #2c3e50 0%, #000 100%);
+            margin: 0; padding: 0; color: white; font-family: 'Segoe UI', Roboto, sans-serif;
+            height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Header Skor SGO Style */
+        .score-section { margin-top: 40px; text-align: center; }
+        .coin-wrap { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .coin-icon { width: 40px; height: 40px; background: gold; border-radius: 50%; border: 3px solid #f39c12; box-shadow: 0 0 15px #f39c12; }
+        #score { font-size: 3.5rem; font-weight: 900; margin: 0; letter-spacing: 2px; }
+
+        /* Area Klik Utama */
+        .click-area {
+            position: relative; flex: 1; display: flex; align-items: center; justify-content: center;
+            width: 100%; perspective: 1000px;
+        }
+        .main-item {
+            width: 280px; height: 280px; border-radius: 50%;
+            background: rgba(243, 156, 18, 0.1); display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 80px rgba(243, 156, 18, 0.2); transition: transform 0.1s;
+        }
+        .main-item img {
+            width: 85%; border-radius: 50%; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+            pointer-events: none; transform-style: preserve-3d;
+        }
+
+        /* Progress Bar Energi */
+        .energy-section { width: 80%; margin-bottom: 40px; }
+        .energy-info { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; font-weight: bold; }
+        .energy-bar-bg { width: 100%; height: 14px; background: #333; border-radius: 10px; overflow: hidden; border: 1px solid #444; }
+        #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #f39c12, #f1c40f); transition: width 0.2s; }
+
+        /* Animasi Angka Melayang */
+        .plus-one {
+            position: absolute; color: white; font-size: 2.2rem; font-weight: 900;
+            pointer-events: none; animation: floatUp 0.7s ease-out forwards;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.2); opacity: 0; }
+        }
+
+        /* Tombol Klaim */
+        .claim-btn {
+            position: fixed; bottom: 80px; background: white; color: black;
+            padding: 15px 40px; border-radius: 50px; font-weight: 900;
+            border: none; cursor: pointer; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="score-section">
+        <div class="coin-wrap">
+            <div class="coin-icon"></div>
+            <p id="score">0</p>
+        </div>
+        <p style="color: #aaa; margin: 5px 0;">Koin Lucky Sus</p>
+    </div>
+
+    <div class="click-area" id="clicker">
+        <div class="main-item" id="item-circle">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" alt="Lucky Sus">
+        </div>
+    </div>
+
+    <div class="energy-section">
+        <div class="energy-info">
+            <span>⚡ ENERGI</span>
+            <span id="energy-text">100 / 100</span>
+        </div>
+        <div class="energy-bar-bg">
+            <div id="energy-fill"></div>
+        </div>
+    </div>
+
+    <button id="btnClaim" class="claim-btn" onclick="sendData()">🎁 KLAIM KOIN SEKARANG</button>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+    
+    let score = 0;
+    let energy = 100;
+    const clicker = document.getElementById('clicker');
+    const circle = document.getElementById('item-circle');
+
+    clicker.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        if (energy <= 0) return;
+
+        // Ambil koordinat sentuhan (mendukung multitouch seperti Hamster)
+        for (let i = 0; i < e.touches.length; i++) {
+            processClick(e.touches[i].clientX, e.touches[i].clientY);
+        }
+    });
+
+    function processClick(x, y) {
+        if (energy <= 0) return;
+
+        score++;
+        energy--;
+        
+        // Update UI
+        document.getElementById('score').innerText = score.toLocaleString();
+        document.getElementById('energy-text').innerText = `${energy} / 100`;
+        document.getElementById('energy-fill').style.width = energy + '%';
+
+        // Efek Visual Tilt (Miring)
+        circle.style.transform = `scale(0.95) rotateX(${Math.random() * 10 - 5}deg) rotateY(${Math.random() * 10 - 5}deg)`;
+        setTimeout(() => circle.style.transform = 'scale(1)', 100);
+
+        // Angka Melayang
+        const p = document.createElement('div');
+        p.className = 'plus-one';
+        p.innerText = '+1';
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 700);
+
+        // Munculkan tombol klaim jika sudah ada poin
+        if (score >= 5) document.getElementById('btnClaim').style.display = 'block';
+        
+        // Getaran HP (Haptic Feedback)
+        if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+    }
+
+    function sendData() {
+        let name = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Player";
+        tg.sendData(`GAME_TRIAL||${name}||${score}`);
+        tg.close();
+    }
+</script>
+</body>
+</html>
