@@ -8,39 +8,28 @@
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; --gray: #95a5a6; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 120px; }
-        
-        /* NAVIGASI TAB */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
         .nav-item { text-align: center; color: var(--gray); font-size: 0.75rem; cursor: pointer; flex: 1; border: none; background: none; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
         .nav-item span { font-size: 1.4rem; display: block; margin-bottom: 2px; }
-
-        /* HALAMAN */
         .page { display: none; padding: 15px; }
         .page.active { display: block; }
-
         .header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; padding: 35px 15px; text-align: center; color: white; border-bottom: 4px solid var(--primary); }
         .header h1 { margin: 0; font-size: 1.8rem; }
         .container { padding: 15px; }
         .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
         .menu-card { background: white; border-radius: 15px; margin-bottom: 15px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
         .menu-img { width: 110px; height: 110px; object-fit: cover; }
         .menu-details { padding: 12px; flex: 1; }
         .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
         .menu-price { color: var(--success); font-weight: bold; margin: 4px 0; display: block; }
-        
         .counter-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
         .btn-qty { background: #eee; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .qty-input { width: 50px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 5px; font-weight: bold; }
-
-        /* GALERI */
         .galeri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .galeri-item { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .galeri-item img { width: 100%; height: 120px; object-fit: cover; }
-
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
         .summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; border: 1px dashed #ccc; }
@@ -49,11 +38,7 @@
 <body>
 
 <div id="page-menu" class="page active">
-    <div class="header">
-        <h1>Lucky Kue Sus</h1>
-        <div style="font-size: 0.85rem; margin-top: 8px;">📍 Jl. Lolongok No. 14 Empang, Bogor Selatan</div>
-    </div>
-
+    <div class="header"><h1>Lucky Kue Sus</h1><div style="font-size: 0.85rem; margin-top: 8px;">📍 Jl. Lolongok No. 14 Empang, Bogor Selatan</div></div>
     <div class="container">
         <div class="box">
             <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
@@ -65,8 +50,7 @@
         <div class="menu-card">
             <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg?updatedAt=1767044159789" class="menu-img">
             <div class="menu-details">
-                <p class="menu-title">Sus Strawberry</p>
-                <span class="menu-price">Rp 7.000</span>
+                <p class="menu-title">Sus Strawberry</p><span class="menu-price">Rp 7.000</span>
                 <input type="text" id="note1" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
                 <div class="counter-wrapper">
                     <button class="btn-qty" onclick="changeQty('Sus Strawberry', 7000, 'note1', -1)">-</button>
@@ -79,8 +63,7 @@
         <div class="menu-card">
             <img src="https://ik.imagekit.io/uu3h5rnaw/maxresdefault.jpg?updatedAt=1767044202652" class="menu-img">
             <div class="menu-details">
-                <p class="menu-title">Sus Coklat Lumer</p>
-                <span class="menu-price">Rp 6.500</span>
+                <p class="menu-title">Sus Coklat Lumer</p><span class="menu-price">Rp 6.500</span>
                 <input type="text" id="note2" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
                 <div class="counter-wrapper">
                     <button class="btn-qty" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', -1)">-</button>
@@ -93,8 +76,7 @@
         <div class="menu-card">
             <img src="https://ik.imagekit.io/uu3h5rnaw/7896ea27846b5d6e287bee2bf467cc5f.jpg" class="menu-img">
             <div class="menu-details">
-                <p class="menu-title">Kue Sus Original</p>
-                <span class="menu-price">Rp 7.500</span>
+                <p class="menu-title">Kue Sus Original</p><span class="menu-price">Rp 7.500</span>
                 <input type="text" id="note3" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
                 <div class="counter-wrapper">
                     <button class="btn-qty" onclick="changeQty('Kue Sus Original', 7500, 'note3', -1)">-</button>
@@ -119,9 +101,7 @@
 
 <div id="page-sosmed" class="page">
     <h3 style="text-align: center;">Media Sosial</h3>
-    <div class="box" style="text-align: center;">
-        <button onclick="window.open('https://wa.me/6289639541438')" style="background:#25d366; color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold; margin-bottom:10px;">WhatsApp Admin</button>
-    </div>
+    <div class="box" style="text-align: center;"><button onclick="window.open('https://wa.me/6289639541438')" style="background:#25d366; color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold;">WhatsApp Admin</button></div>
 </div>
 
 <div class="bottom-nav">
@@ -136,7 +116,7 @@
         <div id="rincianFinal" class="summary-list"></div>
         <p style="font-size:0.8rem; font-weight:bold;">SCAN QRIS UNTUK BAYAR:</p>
         <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" style="width:100%; max-width:220px; border-radius:12px; border:1px solid #eee; margin-bottom:15px;">
-        <button onclick="sendToBot()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">SAYA SUDAH BAYAR ✓</button>
+        <button onclick="sendToBot()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">SAYA SUDAH BAYAR ✓</button>
         <button onclick="document.getElementById('paymentModal').style.display='none'" style="background:#eee; width:100%; padding:10px; border:none; border-radius:12px; margin-top:10px;">BATAL</button>
     </div>
 </div>
@@ -167,28 +147,23 @@
             document.getElementById('statusLokasi').style.display = 'block';
             document.getElementById('btnGetLoc').style.display = 'none';
             updateUI();
-        }, () => alert("Mohon aktifkan GPS!"));
+        }, () => alert("Aktifkan GPS!"));
     }
 
-    function changeQty(name, price, noteId, delta) {
-        let current = cart[name] ? cart[name].qty : 0;
-        manualQty(name, price, noteId, Math.max(0, current + delta));
-    }
+    function changeQty(n, p, nid, d) { manualQty(n, p, nid, Math.max(0, (cart[n] ? cart[n].qty : 0) + d)); }
 
     function manualQty(name, price, noteId, value) {
         let qty = parseInt(value) || 0;
-        if (qty > 0) cart[name] = { price, qty, noteId };
-        else delete cart[name];
+        if (qty > 0) cart[name] = { price, qty, noteId }; else delete cart[name];
         document.getElementById('qty-' + name).value = qty;
         updateUI();
     }
 
     function updateUI() {
-        let count = 0, total = 0;
-        for (let x in cart) { count += cart[x].qty; total += (cart[x].price * cart[x].qty); }
-        if (count > 0 && ongkir > 0) {
+        let c = 0, t = 0; for (let x in cart) { c += cart[x].qty; t += (cart[x].price * cart[x].qty); }
+        if (c > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
-            document.getElementById('btnOrder').innerText = "BAYAR LUNAS: RP " + (total + ongkir).toLocaleString('id-ID');
+            document.getElementById('btnOrder').innerText = "BAYAR LUNAS: RP " + (t + ongkir).toLocaleString('id-ID');
         } else { document.getElementById('btnOrder').style.display = 'none'; }
     }
 
@@ -196,43 +171,36 @@
         let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama Pemesan!");
         const sekarang = new Date();
-        
-        // FORMAT NO RESI KEMBALI SEPERTI ASLI
         let resiId = "LKU-" + sekarang.getFullYear() + "-" + String(sekarang.getMonth() + 1).padStart(2, '0') + "-" + Date.now().toString().slice(-4);
         const waktuPesan = sekarang.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
-        html += "<b>Pemesan: " + name + "</b><br><br>";
-        
+        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'><b>Pemesan: " + name + "</b><br><br>";
         let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
-        let totalKue = 0;
-
+        
+        let totalBelanja = 0;
         for (let x in cart) {
             let note = document.getElementById(cart[x].noteId).value || "-";
             let sub = cart[x].price * cart[x].qty;
-            totalKue += sub;
+            totalBelanja += sub;
             html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br><small>Note: " + note + "</small><br>";
-            teksBase += "🔹 " + x + " (x" + cart[x].qty + ")\n   Catatan: " + note + "\n\n";
+            // DETAIL HARGA PER ITEM MASUK KE BOT DI SINI
+            teksBase += "🔹 " + x + "\n   " + cart[x].qty + " x Rp " + cart[x].price.toLocaleString() + " = Rp " + sub.toLocaleString() + "\n   Note: " + note + "\n\n";
         }
         
-        let total = totalKue + ongkir;
+        let grandTotal = totalBelanja + ongkir;
         let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
         
-        // DETAIL ONGKIR & JARAK KEMBALI
-        html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br>💰 Ongkir: Rp " + ongkir.toLocaleString() + "<h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
+        html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br>💰 Belanja: Rp " + totalBelanja.toLocaleString() + "<br>🚚 Ongkir: Rp " + ongkir.toLocaleString() + "<h3>TOTAL: Rp " + grandTotal.toLocaleString() + "</h3>";
         
-        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n🚚 Ongkir: Rp " + ongkir.toLocaleString() + "\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink;
+        // PAYLOAD UNTUK BOT LENGKAP DENGAN DETAIL HARGA
+        let payload = teksBase + "--------------------------\n🛒 Total Belanja: Rp " + totalBelanja.toLocaleString() + "\n🚚 Ongkir (" + jarakGlobal.toFixed(1) + " km): Rp " + ongkir.toLocaleString() + "\n💰 GRAND TOTAL: Rp " + grandTotal.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
-    function sendToBot() {
-        let payload = document.getElementById('rincianFinal').getAttribute('data-payload');
-        tg.sendData(payload);
-        tg.close();
-    }
+    function sendToBot() { tg.sendData(document.getElementById('rincianFinal').getAttribute('data-payload')); tg.close(); }
 </script>
 </body>
 </html>
