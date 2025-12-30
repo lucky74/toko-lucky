@@ -141,7 +141,7 @@
         const kodeUnik = Date.now().toString().slice(-4);
         let resiId = `LKU-${tahun}-${bulan}-${kodeUnik}`;
 
-        // FITUR HUBUNGI PEMBELI (BARU)
+        // AMBIL DATA USER TELEGRAM UNTUK FITUR HUBUNGI PEMBELI
         let user = tg.initDataUnsafe.user;
         let linkChat = user.username ? `https://t.me/${user.username}` : `tg://user?id=${user.id}`;
 
@@ -167,7 +167,7 @@
         
         html += `<hr style="border:0.5px dashed #ccc">🛵 Jarak: ${jarakGlobal.toFixed(1)} km<br>⏳ Estimasi Tiba: ${estimasiWaktu} Menit<br><h3>TOTAL: Rp ${total.toLocaleString()}</h3>`;
         
-        // TEKS BOT DENGAN LINK CHAT
+        // TEKS BOT DENGAN LINK CHAT PEMBELI
         teksBot += `--------------------------\n🛵 *INFO PENGIRIMAN*:\n📍 Jarak: ${jarakGlobal.toFixed(1)} km\n⏳ Estimasi Tiba: ${estimasiWaktu} Menit\n💰 Ongkir: Rp ${ongkir.toLocaleString()}\n💰 *GRAND TOTAL: Rp ${total.toLocaleString()}*\n\n📍 *LOKASI PENERIMA*:\n${gmapsLink}\n\n💬 *HUBUNGI PEMBELI*:\n${linkChat}\n\n✅ STATUS: SUDAH BAYAR LUNAS`;
         
         document.getElementById('rincianFinal').innerHTML = html;
