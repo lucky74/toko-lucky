@@ -25,10 +25,8 @@
         .btn-loc { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
-        .qris-img { width: 100%; max-width: 220px; border-radius: 12px; margin: 15px 0; border: 1px solid #eee; }
         .summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; border: 1px dashed #ccc; }
         .btn-pay { background: var(--success); color: white; width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; font-size: 1rem; cursor: pointer; margin-bottom: 10px; }
-        .btn-back { background: var(--danger); color: white; width: 100%; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 0.9rem; cursor: pointer; opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -45,10 +43,6 @@
     <div class="box">
         <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
         <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
-        
-        <label style="font-size:0.85rem; font-weight:bold; margin-top:10px; display:block;">NOMOR WHATSAPP PEMBELI:</label>
-        <input type="number" id="customerPhone" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Contoh: 0896...">
-        
         <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR & LOKASI SAYA</button>
         <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Pengiriman Terdeteksi</div>
     </div>
@@ -64,11 +58,11 @@
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin:0;">Struk Pesanan Lucky</h3>
+        <h3>Struk Pesanan Lucky</h3>
         <div id="rincianFinal" class="summary-list"></div>
-        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" class="qris-img">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" style="width:100%; max-width:200px; margin-bottom:15px; border-radius:10px;">
         <button class="btn-pay" onclick="sendToBot()">SAYA SUDAH BAYAR ✓</button>
-        <button class="btn-back" onclick="document.getElementById('paymentModal').style.display='none'">KEMBALI KE MENU UTAMA</button>
+        <button onclick="document.getElementById('paymentModal').style.display='none'" style="background:#ccc; border:none; width:100%; padding:10px; border-radius:10px;">KEMBALI</button>
     </div>
 </div>
 
@@ -76,12 +70,12 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
     let cart = {};
-    let ongkir = 0, jarakGlobal = 0, estimasiWaktu = 0;
+    let ongkir = 0, jarakGlobal = 0;
     let userLat = 0, userLon = 0;
     const TOKO_LAT = -6.40248, TOKO_LON = 106.79424;
 
     function ambilLokasi() {
-        document.getElementById('btnGetLoc').innerText = "📍 Mendeteksi Lokasi...";
+        document.getElementById('btnGetLoc').innerText = "📍 Mendeteksi...";
         navigator.geolocation.getCurrentPosition(pos => {
             userLat = pos.coords.latitude; userLon = pos.coords.longitude;
             const R = 6371;
@@ -90,11 +84,10 @@
             jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
             ongkir += 2000;
-            estimasiWaktu = Math.round((jarakGlobal / 30 * 60) + 10);
             document.getElementById('statusLokasi').style.display = 'block';
             document.getElementById('btnGetLoc').style.display = 'none';
             updateUI();
-        }, () => alert("Mohon aktifkan GPS!"));
+        }, () => alert("Aktifkan GPS!"));
     }
 
     function add(name, price, noteId) {
@@ -114,36 +107,34 @@
 
     function showPayment() {
         let name = document.getElementById('customerName').value.trim();
-        let phone = document.getElementById('customerPhone').value.trim();
-        if(!name || !phone) return alert("Isi Nama dan Nomor WA!");
+        if(!name) return alert("Isi Nama Pemesan!");
         
         const sekarang = new Date();
         let resiId = "LKU-" + sekarang.getFullYear() + "-" + String(sekarang.getMonth() + 1).padStart(2, '0') + "-" + Date.now().toString().slice(-4);
-        
-        const opsi = { timeZone: 'Asia/Jakarta', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        const waktuPesan = sekarang.toLocaleString('id-ID', opsi);
+        const waktuPesan = sekarang.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        let html = "<b>No. Resi: " + resiId + "</b><br><small>Waktu: " + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
-        html += "<b>Pemesan: " + name + "</b><br><b>WA: " + phone + "</b><br><br>";
-        
-        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nWA: " + phone + "\nRINCIAN:\n\n";
+        let user = tg.initDataUnsafe.user || { id: 0 };
+        let linkTelePembeli = "tg://user?id=" + user.id;
+
+        let html = "<b>No. Resi: " + resiId + "</b><br><b>Pemesan: " + name + "</b><br><hr style='border:0.5px dashed #ccc'>";
+        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
         let totalKue = 0;
 
         for (let x in cart) {
             let note = document.getElementById(cart[x].noteId).value || "-";
             let sub = cart[x].price * cart[x].qty;
             totalKue += sub;
-            html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br><small>Note: " + note + "</small><br><br>";
+            html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br>";
             teksBase += "🔹 " + x + " (x" + cart[x].qty + ")\n   Catatan: " + note + "\n\n";
         }
         
         let total = totalKue + ongkir;
-        let gmapsLink = "http://maps.google.com/maps?q=" + userLat + "," + userLon;
+        let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
         
         html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
         
-        let linkWAPembeli = "https://wa.me/62" + phone.replace(/^0/, '');
-        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 GRAND TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink + "||" + linkWAPembeli;
+        // Payload rahasia (Teks || Link Tele Pembeli)
+        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink + "||" + linkTelePembeli;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
@@ -151,10 +142,10 @@
     }
 
     function sendToBot() {
-        let payload = document.getElementById('rincianFinal').getAttribute('data-payload');
-        tg.sendData(payload);
+        tg.sendData(document.getElementById('rincianFinal').getAttribute('data-payload'));
         tg.close();
     }
 </script>
 </body>
 </html>
+
