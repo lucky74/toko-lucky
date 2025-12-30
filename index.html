@@ -9,7 +9,6 @@
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; --danger: #e74c3c; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 160px; }
         
-        /* Background Foto Judul Kembali */
         .header { 
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); 
             background-size: cover; background-position: center; padding: 35px 15px; text-align: center; color: white; border-bottom: 4px solid var(--primary); 
@@ -25,9 +24,12 @@
         .menu-details { padding: 12px; flex: 1; position: relative; }
         .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
         .menu-price { color: var(--success); font-weight: bold; margin: 4px 0; display: block; }
-        .note-input { width: 85%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
+        .note-input { width: 90%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
         
-        .add-btn { position: absolute; right: 15px; bottom: 15px; background: var(--primary); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; }
+        .counter-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .btn-qty { background: #eee; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .btn-qty.plus { background: var(--primary); color: white; }
+        .qty-num { font-weight: bold; font-size: 1rem; min-width: 20px; text-align: center; }
         
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
@@ -62,7 +64,11 @@
             <p class="menu-title">Sus Strawberry</p>
             <span class="menu-price">Rp 7.000</span>
             <input type="text" class="note-input" id="note1" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Strawberry', 7000, 'note1')">+</button>
+            <div class="counter-wrapper">
+                <button class="btn-qty" onclick="changeQty('Sus Strawberry', 7000, 'note1', -1)">-</button>
+                <span class="qty-num" id="qty-Sus Strawberry">0</span>
+                <button class="btn-qty plus" onclick="changeQty('Sus Strawberry', 7000, 'note1', 1)">+</button>
+            </div>
         </div>
     </div>
 
@@ -72,7 +78,11 @@
             <p class="menu-title">Sus Coklat Lumer</p>
             <span class="menu-price">Rp 6.500</span>
             <input type="text" class="note-input" id="note2" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Coklat Lumer', 6500, 'note2')">+</button>
+            <div class="counter-wrapper">
+                <button class="btn-qty" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', -1)">-</button>
+                <span class="qty-num" id="qty-Sus Coklat Lumer">0</span>
+                <button class="btn-qty plus" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', 1)">+</button>
+            </div>
         </div>
     </div>
 
@@ -82,7 +92,11 @@
             <p class="menu-title">Sus Keju Gurih</p>
             <span class="menu-price">Rp 7.500</span>
             <input type="text" class="note-input" id="note3" placeholder="Catatan...">
-            <button class="add-btn" onclick="add('Sus Keju Gurih', 7500, 'note3')">+</button>
+            <div class="counter-wrapper">
+                <button class="btn-qty" onclick="changeQty('Sus Keju Gurih', 7500, 'note3', -1)">-</button>
+                <span class="qty-num" id="qty-Sus Keju Gurih">0</span>
+                <button class="btn-qty plus" onclick="changeQty('Sus Keju Gurih', 7500, 'note3', 1)">+</button>
+            </div>
         </div>
     </div>
 </div>
@@ -103,7 +117,7 @@
 
 <script>
     let tg = window.Telegram.WebApp; tg.expand();
-    let cart = {}; let ongkir = 0, jarakGlobal = 0, estimasiWaktu = 0;
+    let cart = {}; let ongkir = 0, jarakGlobal = 0;
     let userLat = 0, userLon = 0;
     const TOKO_LAT = -6.40248, TOKO_LON = 106.79424;
 
@@ -117,25 +131,39 @@
             jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
             ongkir += 2000;
-            estimasiWaktu = Math.round((jarakGlobal / 30 * 60) + 10);
             document.getElementById('statusLokasi').style.display = 'block';
             document.getElementById('btnGetLoc').style.display = 'none';
             updateUI();
         }, () => alert("Mohon aktifkan GPS!"));
     }
 
-    function add(name, price, noteId) {
-        if (!cart[name]) cart[name] = { price, qty: 1, noteId };
-        else cart[name].qty++;
+    function changeQty(name, price, noteId, delta) {
+        if (!cart[name]) {
+            if (delta > 0) cart[name] = { price, qty: delta, noteId };
+        } else {
+            cart[name].qty += delta;
+            if (cart[name].qty <= 0) delete cart[name];
+        }
+        
+        // Update angka di tampilan kartu menu
+        let currentQty = cart[name] ? cart[name].qty : 0;
+        document.getElementById('qty-' + name).innerText = currentQty;
+        
         updateUI();
     }
 
     function updateUI() {
         let count = 0, total = 0;
-        for (let x in cart) { count += cart[x].qty; total += (cart[x].price * cart[x].qty); }
+        for (let x in cart) { 
+            count += cart[x].qty; 
+            total += (cart[x].price * cart[x].qty); 
+        }
+        
         if (count > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
             document.getElementById('btnOrder').innerText = "BAYAR LUNAS: RP " + (total + ongkir).toLocaleString('id-ID');
+        } else {
+            document.getElementById('btnOrder').style.display = 'none';
         }
     }
 
