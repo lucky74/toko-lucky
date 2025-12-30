@@ -7,143 +7,135 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; --gray: #95a5a6; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 90px; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 120px; }
         
-        /* Navigasi Tab (Gaya Hamster Kombat) */
+        /* NAVIGASI TAB */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #eee; z-index: 1000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
-        .nav-item { text-align: center; color: var(--gray); font-size: 0.75rem; cursor: pointer; flex: 1; border: none; background: none; outline: none; transition: 0.3s; }
+        .nav-item { text-align: center; color: var(--gray); font-size: 0.75rem; cursor: pointer; flex: 1; border: none; background: none; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-item span { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+        .nav-item span { font-size: 1.4rem; display: block; margin-bottom: 2px; }
 
-        /* Kontainer Halaman */
-        .page { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        /* HALAMAN */
+        .page { display: none; padding: 15px; }
         .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; padding: 30px 15px; text-align: center; color: white; border-bottom: 4px solid var(--primary); margin-bottom: 15px; border-radius: 0 0 20px 20px; }
-        .header h1 { margin: 0; font-size: 1.6rem; }
-
-        /* Kartu Menu & Input */
+        .header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; padding: 35px 15px; text-align: center; color: white; border-bottom: 4px solid var(--primary); }
+        .header h1 { margin: 0; font-size: 1.8rem; }
+        .container { padding: 15px; }
         .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
         .menu-card { background: white; border-radius: 15px; margin-bottom: 15px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
-        .menu-img { width: 100px; height: 100px; object-fit: cover; }
+        .menu-img { width: 110px; height: 110px; object-fit: cover; }
         .menu-details { padding: 12px; flex: 1; }
-        .menu-title { font-weight: bold; font-size: 1rem; margin: 0; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
         .menu-price { color: var(--success); font-weight: bold; margin: 4px 0; display: block; }
         
-        .counter-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-        .qty-input { width: 50px; height: 32px; text-align: center; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 1rem; }
+        .counter-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
         .btn-qty { background: #eee; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .btn-qty.plus { background: var(--primary); color: white; }
+        .qty-input { width: 50px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 5px; font-weight: bold; }
 
-        /* Galeri Grid */
-        .galeri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .galeri-item { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid #eee; }
-        .galeri-item img { width: 100%; height: 110px; object-fit: cover; }
-        .galeri-info { padding: 8px; font-size: 0.8rem; line-height: 1.3; }
+        /* GALERI */
+        .galeri-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .galeri-item { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .galeri-item img { width: 100%; height: 120px; object-fit: cover; }
 
-        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: bold; font-size: 1.1rem; margin-top: 10px; display: none; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3); }
+        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
+        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 25px; text-align: center; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; max-height: 85vh; overflow-y: auto; }
+        .summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; border: 1px dashed #ccc; }
     </style>
 </head>
 <body>
 
-<div id="page-order" class="page active">
+<div id="page-menu" class="page active">
     <div class="header">
         <h1>Lucky Kue Sus</h1>
-        <p style="font-size: 0.8rem; margin-top: 5px;">📍 Bogor Selatan | 📞 089639541438</p>
+        <div style="font-size: 0.85rem; margin-top: 8px;">📍 Jl. Lolongok No. 14 Empang, Bogor Selatan</div>
     </div>
 
-    <div class="box">
-        <label style="font-size:0.8rem; font-weight:bold; color: var(--dark);">NAMA PEMESAN:</label>
-        <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:10px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
-        <button onclick="ambilLokasi()" id="btnGetLoc" style="background:var(--dark); color:white; border:none; padding:12px; border-radius:10px; width:100%; margin-top:10px; font-weight:bold; cursor:pointer;">📍 CEK ONGKIR & LOKASI SAYA</button>
-        <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold; text-align:center;">✅ Lokasi Terdeteksi</div>
-    </div>
+    <div class="container">
+        <div class="box">
+            <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
+            <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
+            <button id="btnGetLoc" onclick="ambilLokasi()" style="background:var(--dark); color:white; border:none; padding:12px; border-radius:10px; width:100%; cursor:pointer; font-weight:bold; margin-top:10px;">📍 CEK ONGKIR & LOKASI SAYA</button>
+            <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Terdeteksi</div>
+        </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg?updatedAt=1767044159789" class="menu-img">
-        <div class="menu-details">
-            <p class="menu-title">Sus Strawberry</p>
-            <span class="menu-price">Rp 7.000</span>
-            <input type="text" id="note1" class="qty-input" style="width: 85%; height: 25px; font-size: 0.7rem; margin-bottom: 5px;" placeholder="Catatan...">
-            <div class="counter-wrapper">
-                <button class="btn-qty" onclick="changeQty('Sus Strawberry', 7000, 'note1', -1)">-</button>
-                <input type="number" class="qty-input" id="qty-Sus Strawberry" value="0" oninput="manualQty('Sus Strawberry', 7000, 'note1', this.value)">
-                <button class="btn-qty plus" onclick="changeQty('Sus Strawberry', 7000, 'note1', 1)">+</button>
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg?updatedAt=1767044159789" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Strawberry</p>
+                <span class="menu-price">Rp 7.000</span>
+                <input type="text" id="note1" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
+                <div class="counter-wrapper">
+                    <button class="btn-qty" onclick="changeQty('Sus Strawberry', 7000, 'note1', -1)">-</button>
+                    <input type="number" class="qty-input" id="qty-Sus Strawberry" value="0" oninput="manualQty('Sus Strawberry', 7000, 'note1', this.value)">
+                    <button class="btn-qty" style="background:var(--primary); color:white;" onclick="changeQty('Sus Strawberry', 7000, 'note1', 1)">+</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/maxresdefault.jpg?updatedAt=1767044202652" class="menu-img">
-        <div class="menu-details">
-            <p class="menu-title">Sus Coklat Lumer</p>
-            <span class="menu-price">Rp 6.500</span>
-            <input type="text" id="note2" class="qty-input" style="width: 85%; height: 25px; font-size: 0.7rem; margin-bottom: 5px;" placeholder="Catatan...">
-            <div class="counter-wrapper">
-                <button class="btn-qty" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', -1)">-</button>
-                <input type="number" class="qty-input" id="qty-Sus Coklat Lumer" value="0" oninput="manualQty('Sus Coklat Lumer', 6500, 'note2', this.value)">
-                <button class="btn-qty plus" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', 1)">+</button>
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/maxresdefault.jpg?updatedAt=1767044202652" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Sus Coklat Lumer</p>
+                <span class="menu-price">Rp 6.500</span>
+                <input type="text" id="note2" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
+                <div class="counter-wrapper">
+                    <button class="btn-qty" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', -1)">-</button>
+                    <input type="number" class="qty-input" id="qty-Sus Coklat Lumer" value="0" oninput="manualQty('Sus Coklat Lumer', 6500, 'note2', this.value)">
+                    <button class="btn-qty" style="background:var(--primary); color:white;" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', 1)">+</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="menu-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/7896ea27846b5d6e287bee2bf467cc5f.jpg" class="menu-img">
-        <div class="menu-details">
-            <p class="menu-title">Kue Sus Original</p>
-            <span class="menu-price">Rp 7.500</span>
-            <input type="text" id="note3" class="qty-input" style="width: 85%; height: 25px; font-size: 0.7rem; margin-bottom: 5px;" placeholder="Catatan...">
-            <div class="counter-wrapper">
-                <button class="btn-qty" onclick="changeQty('Kue Sus Original', 7500, 'note3', -1)">-</button>
-                <input type="number" class="qty-input" id="qty-Kue Sus Original" value="0" oninput="manualQty('Kue Sus Original', 7500, 'note3', this.value)">
-                <button class="btn-qty plus" onclick="changeQty('Kue Sus Original', 7500, 'note3', 1)">+</button>
+        <div class="menu-card">
+            <img src="https://ik.imagekit.io/uu3h5rnaw/7896ea27846b5d6e287bee2bf467cc5f.jpg" class="menu-img">
+            <div class="menu-details">
+                <p class="menu-title">Kue Sus Original</p>
+                <span class="menu-price">Rp 7.500</span>
+                <input type="text" id="note3" placeholder="Catatan..." style="width:90%; padding:5px; font-size:0.8rem; margin-top:5px; border:1px solid #eee; border-radius:5px;">
+                <div class="counter-wrapper">
+                    <button class="btn-qty" onclick="changeQty('Kue Sus Original', 7500, 'note3', -1)">-</button>
+                    <input type="number" class="qty-input" id="qty-Kue Sus Original" value="0" oninput="manualQty('Kue Sus Original', 7500, 'note3', this.value)">
+                    <button class="btn-qty" style="background:var(--primary); color:white;" onclick="changeQty('Kue Sus Original', 7500, 'note3', 1)">+</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & BAYAR SEKARANG</button>
+        <button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & BAYAR SEKARANG</button>
+    </div>
 </div>
 
 <div id="page-galeri" class="page">
-    <h3 style="text-align: center; color: var(--dark); margin-bottom: 15px;">🖼️ Galeri Produk Lucky</h3>
+    <h3 style="text-align: center;">Galeri Produk Lucky</h3>
     <div class="galeri-grid">
-        <div class="galeri-item">
-            <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg?updatedAt=1767044159789">
-            <div class="galeri-info"><b>Sus Strawberry</b><br>Perpaduan vla lembut dengan kesegaran buah strawberry asli.</div>
-        </div>
-        <div class="galeri-item">
-            <img src="https://ik.imagekit.io/uu3h5rnaw/maxresdefault.jpg?updatedAt=1767044202652">
-            <div class="galeri-info"><b>Sus Coklat</b><br>Isian coklat melimpah yang lumer di setiap gigitan.</div>
-        </div>
-        <div class="galeri-item">
-            <img src="https://ik.imagekit.io/uu3h5rnaw/7896ea27846b5d6e287bee2bf467cc5f.jpg">
-            <div class="galeri-info"><b>Kue Sus Premium</b><br>Tekstur kulit yang renyah dengan isian vla susu yang gurih.</div>
-        </div>
+        <div class="galeri-item"><img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg?updatedAt=1767044159789"><p style="padding:5px; font-size:0.8rem;">Sus Strawberry</p></div>
+        <div class="galeri-item"><img src="https://ik.imagekit.io/uu3h5rnaw/maxresdefault.jpg?updatedAt=1767044202652"><p style="padding:5px; font-size:0.8rem;">Sus Coklat</p></div>
+        <div class="galeri-item"><img src="https://ik.imagekit.io/uu3h5rnaw/7896ea27846b5d6e287bee2bf467cc5f.jpg"><p style="padding:5px; font-size:0.8rem;">Kue Sus Original</p></div>
     </div>
 </div>
 
 <div id="page-sosmed" class="page">
-    <h3 style="text-align: center; color: var(--dark); margin-bottom: 15px;">📱 Media Sosial</h3>
-    <div class="box" style="text-align: center; padding: 30px 15px;">
-        <p style="color: var(--gray); margin-bottom: 20px;">Ikuti kami untuk promo menarik!</p>
-        <button onclick="window.open('https://wa.me/6289639541438')" style="background: #25d366; color:white; border:none; padding:15px; border-radius:12px; width:100%; font-weight:bold; margin-bottom:12px;">WHATSAPP ADMIN</button>
-        <button onclick="alert('Instagram segera hadir!')" style="background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color:white; border:none; padding:15px; border-radius:12px; width:100%; font-weight:bold;">INSTAGRAM</button>
+    <h3 style="text-align: center;">Media Sosial</h3>
+    <div class="box" style="text-align: center;">
+        <button onclick="window.open('https://wa.me/6289639541438')" style="background:#25d366; color:white; border:none; padding:15px; border-radius:10px; width:100%; font-weight:bold; margin-bottom:10px;">WhatsApp Admin</button>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <button class="nav-item active" onclick="switchPage('order', this)"><span>🛒</span>Order</button>
+    <button class="nav-item active" onclick="switchPage('menu', this)"><span>🛒</span>Menu</button>
     <button class="nav-item" onclick="switchPage('galeri', this)"><span>🖼️</span>Galeri</button>
     <button class="nav-item" onclick="switchPage('sosmed', this)"><span>📱</span>Medsos</button>
 </div>
 
 <div id="paymentModal" class="modal">
     <div class="modal-content">
-        <h3 style="margin-top:0;">Struk Pesanan Lucky</h3>
+        <h3>Struk Pesanan Lucky</h3>
         <div id="rincianFinal" class="summary-list"></div>
+        <p style="font-size:0.8rem; font-weight:bold;">SCAN QRIS UNTUK BAYAR:</p>
+        <img src="https://ik.imagekit.io/uu3h5rnaw/WhatsApp-Image-2025-12-29-at-20.25.01.jpg" style="width:100%; max-width:220px; border-radius:12px; border:1px solid #eee; margin-bottom:15px;">
         <button onclick="sendToBot()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">SAYA SUDAH BAYAR ✓</button>
         <button onclick="document.getElementById('paymentModal').style.display='none'" style="background:#eee; width:100%; padding:10px; border:none; border-radius:12px; margin-top:10px;">BATAL</button>
     </div>
@@ -153,8 +145,7 @@
     let tg = window.Telegram.WebApp; tg.expand();
     let cart = {}; let ongkir = 0, jarakGlobal = 0;
     let userLat = 0, userLon = 0;
-    const TOKO_LAT = -6.612098414089768;
-    const TOKO_LON = 106.79659260728218;
+    const TOKO_LAT = -6.612098414089768, TOKO_LON = 106.79659260728218;
 
     function switchPage(pageId, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -164,12 +155,11 @@
     }
 
     function ambilLokasi() {
-        document.getElementById('btnGetLoc').innerText = "📍 Melacak Lokasi...";
+        document.getElementById('btnGetLoc').innerText = "📍 Mendeteksi...";
         navigator.geolocation.getCurrentPosition(pos => {
             userLat = pos.coords.latitude; userLon = pos.coords.longitude;
             const R = 6371;
-            const dLat = (userLat - TOKO_LAT) * Math.PI / 180;
-            const dLon = (userLon - TOKO_LON) * Math.PI / 180;
+            const dLat = (userLat - TOKO_LAT) * Math.PI / 180, dLon = (userLon - TOKO_LON) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(TOKO_LAT * Math.PI / 180) * Math.cos(userLat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
             jarakGlobal = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             ongkir = jarakGlobal <= 4 ? 12000 : 12000 + (jarakGlobal - 4) * 2500;
@@ -177,7 +167,7 @@
             document.getElementById('statusLokasi').style.display = 'block';
             document.getElementById('btnGetLoc').style.display = 'none';
             updateUI();
-        }, () => alert("Mohon izinkan akses lokasi (GPS)!"));
+        }, () => alert("Mohon aktifkan GPS!"));
     }
 
     function changeQty(name, price, noteId, delta) {
@@ -206,33 +196,41 @@
         let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama Pemesan!");
         const sekarang = new Date();
-        let resiId = "LKU-" + sekarang.getFullYear() + "-" + Date.now().toString().slice(-4);
-        const waktuPesan = sekarang.toLocaleString('id-ID');
+        
+        // FORMAT NO RESI KEMBALI SEPERTI ASLI
+        let resiId = "LKU-" + sekarang.getFullYear() + "-" + String(sekarang.getMonth() + 1).padStart(2, '0') + "-" + Date.now().toString().slice(-4);
+        const waktuPesan = sekarang.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr>";
-        let teksBase = "ID NO. RESI: " + resiId + "\nPEMESAN: " + name + "\nRINCIAN:\n";
+        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
+        html += "<b>Pemesan: " + name + "</b><br><br>";
+        
+        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
         let totalKue = 0;
 
         for (let x in cart) {
             let note = document.getElementById(cart[x].noteId).value || "-";
             let sub = cart[x].price * cart[x].qty;
             totalKue += sub;
-            html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br>";
-            teksBase += "🔹 " + x + " (x" + cart[x].qty + ")\n   Catatan: " + note + "\n";
+            html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br><small>Note: " + note + "</small><br>";
+            teksBase += "🔹 " + x + " (x" + cart[x].qty + ")\n   Catatan: " + note + "\n\n";
         }
         
         let total = totalKue + ongkir;
-        // Fix Link Maps untuk Terminal Ubuntu
         let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
-        let payload = teksBase + "--------------------------\n🛵 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI:\n" + gmapsLink;
         
-        document.getElementById('rincianFinal').innerHTML = html + "<hr><h3>Total: Rp " + total.toLocaleString() + "</h3>";
+        // DETAIL ONGKIR & JARAK KEMBALI
+        html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br>💰 Ongkir: Rp " + ongkir.toLocaleString() + "<h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
+        
+        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n🚚 Ongkir: Rp " + ongkir.toLocaleString() + "\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink;
+        
+        document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
         document.getElementById('paymentModal').style.display = 'flex';
     }
 
     function sendToBot() {
-        tg.sendData(document.getElementById('rincianFinal').getAttribute('data-payload'));
+        let payload = document.getElementById('rincianFinal').getAttribute('data-payload');
+        tg.sendData(payload);
         tg.close();
     }
 </script>
