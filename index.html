@@ -19,10 +19,13 @@
         .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
         .menu-price { color: var(--success); font-weight: bold; margin: 4px 0; display: block; }
         .note-input { width: 90%; padding: 6px; font-size: 0.8rem; border: 1px solid #eee; border-radius: 5px; margin-top: 5px; }
-        .counter-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
-        .btn-qty { background: #eee; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        
+        /* Style Counter Baru */
+        .counter-wrapper { display: flex; align-items: center; gap: 5px; margin-top: 10px; }
+        .btn-qty { background: #eee; border: none; width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1.2rem; }
         .btn-qty.plus { background: var(--primary); color: white; }
-        .qty-num { font-weight: bold; font-size: 1rem; min-width: 20px; text-align: center; }
+        .qty-input { width: 45px; height: 30px; text-align: center; border: 1px solid #ddd; border-radius: 5px; font-weight: bold; font-size: 1rem; }
+        
         .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; }
         .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
         .btn-loc { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
@@ -54,7 +57,7 @@
             <input type="text" class="note-input" id="note1" placeholder="Catatan...">
             <div class="counter-wrapper">
                 <button class="btn-qty" onclick="changeQty('Sus Strawberry', 7000, 'note1', -1)">-</button>
-                <span class="qty-num" id="qty-Sus Strawberry">0</span>
+                <input type="number" class="qty-input" id="qty-Sus Strawberry" value="0" oninput="manualQty('Sus Strawberry', 7000, 'note1', this.value)">
                 <button class="btn-qty plus" onclick="changeQty('Sus Strawberry', 7000, 'note1', 1)">+</button>
             </div>
         </div>
@@ -68,7 +71,7 @@
             <input type="text" class="note-input" id="note2" placeholder="Catatan...">
             <div class="counter-wrapper">
                 <button class="btn-qty" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', -1)">-</button>
-                <span class="qty-num" id="qty-Sus Coklat Lumer">0</span>
+                <input type="number" class="qty-input" id="qty-Sus Coklat Lumer" value="0" oninput="manualQty('Sus Coklat Lumer', 6500, 'note2', this.value)">
                 <button class="btn-qty plus" onclick="changeQty('Sus Coklat Lumer', 6500, 'note2', 1)">+</button>
             </div>
         </div>
@@ -82,7 +85,7 @@
             <input type="text" class="note-input" id="note3" placeholder="Catatan...">
             <div class="counter-wrapper">
                 <button class="btn-qty" onclick="changeQty('Sus Keju Gurih', 7500, 'note3', -1)">-</button>
-                <span class="qty-num" id="qty-Sus Keju Gurih">0</span>
+                <input type="number" class="qty-input" id="qty-Sus Keju Gurih" value="0" oninput="manualQty('Sus Keju Gurih', 7500, 'note3', this.value)">
                 <button class="btn-qty plus" onclick="changeQty('Sus Keju Gurih', 7500, 'note3', 1)">+</button>
             </div>
         </div>
@@ -108,12 +111,11 @@
     let cart = {}; let ongkir = 0, jarakGlobal = 0;
     let userLat = 0, userLon = 0;
     
-    // KOORDINAT TOKO ANDA
     const TOKO_LAT = -6.612098414089768; 
     const TOKO_LON = 106.79659260728218;
 
     function ambilLokasi() {
-        document.getElementById('btnGetLoc').innerText = "📍 Mendeteksi Lokasi...";
+        document.getElementById('btnGetLoc').innerText = "📍 MendETEKSI Lokasi...";
         navigator.geolocation.getCurrentPosition(pos => {
             userLat = pos.coords.latitude; userLon = pos.coords.longitude;
             const R = 6371;
@@ -128,11 +130,23 @@
         }, () => alert("Mohon aktifkan GPS!"));
     }
 
+    // Fungsi Klik Tombol
     function changeQty(name, price, noteId, delta) {
-        if (!cart[name]) { if (delta > 0) cart[name] = { price, qty: delta, noteId }; } 
-        else { cart[name].qty += delta; if (cart[name].qty <= 0) delete cart[name]; }
-        let currentQty = cart[name] ? cart[name].qty : 0;
-        document.getElementById('qty-' + name).innerText = currentQty;
+        let current = cart[name] ? cart[name].qty : 0;
+        let next = current + delta;
+        if (next < 0) next = 0;
+        manualQty(name, price, noteId, next);
+    }
+
+    // Fungsi Ketik Manual
+    function manualQty(name, price, noteId, value) {
+        let qty = parseInt(value) || 0;
+        if (qty > 0) {
+            cart[name] = { price, qty, noteId };
+        } else {
+            delete cart[name];
+        }
+        document.getElementById('qty-' + name).value = qty;
         updateUI();
     }
 
@@ -151,10 +165,7 @@
         const sekarang = new Date();
         let resiId = "LKU-" + sekarang.getFullYear() + "-" + String(sekarang.getMonth() + 1).padStart(2, '0') + "-" + Date.now().toString().slice(-4);
         const waktuPesan = sekarang.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
-        html += "<b>Pemesan: " + name + "</b><br><br>";
-        
+        let html = "<b>No. Resi: " + resiId + "</b><br><small>" + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'><b>Pemesan: " + name + "</b><br><br>";
         let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
         let totalKue = 0;
 
@@ -167,12 +178,9 @@
         }
         
         let total = totalKue + ongkir;
-        // PERBAIKAN LINK GOOGLE MAPS DI SINI (Menghapus angka '1' yang nyasar)
         let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
-        
         html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
         let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink;
-        
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
         document.getElementById('paymentModal').style.display = 'flex';
