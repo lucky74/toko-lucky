@@ -3,103 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Lucky Kue Sus</title>
+    <title>Lucky Kue Sus - Digital Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Kembalikan Desain Mewah Asli Anda */
-        body { font-family: 'Segoe UI', sans-serif; background: #fdf2e9; margin: 0; padding: 15px; }
-        .item-card { background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: flex; align-items: center; padding: 10px; }
-        .item-img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; }
-        .item-detail { flex: 1; padding-left: 15px; }
-        .item-detail h3 { margin: 0; font-size: 16px; color: #d35400; }
-        .item-detail p { margin: 5px 0; font-size: 14px; font-weight: bold; }
+        :root { --primary: #f39c12; --dark: #2c3e50; --bg: #fdfaf5; --success: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); padding-bottom: 160px; }
+        .header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://ik.imagekit.io/uu3h5rnaw/images.jpg'); background-size: cover; background-position: center; padding: 35px 15px; text-align: center; color: white; border-bottom: 4px solid var(--primary); }
+        .header h1 { margin: 0; font-size: 1.8rem; }
+        .container { padding: 15px; }
+        .box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .menu-card { background: white; border-radius: 15px; margin-bottom: 15px; display: flex; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .menu-img { width: 110px; height: 110px; object-fit: cover; }
+        .menu-details { padding: 12px; flex: 1; position: relative; }
+        .menu-title { font-weight: bold; font-size: 1.1rem; margin: 0; }
+        .menu-price { color: var(--success); font-weight: bold; margin: 4px 0; display: block; }
         
-        /* Fitur Naik-Turun (Plus-Minus) */
-        .counter-box { display: flex; align-items: center; gap: 10px; background: #fdf2e9; padding: 5px 10px; border-radius: 20px; }
-        .btn-qty { background: #e67e22; color: white; border: none; width: 25px; height: 25px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        /* TOMBOL PLUS MINUS */
+        .qty-controls { position: absolute; right: 15px; bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .qty-btn { background: var(--primary); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; font-weight: bold; }
         .qty-num { font-weight: bold; min-width: 15px; text-align: center; }
 
-        /* Panel Pembayaran & Diskon */
-        .payment-box { background: white; padding: 15px; border-radius: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
-        .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .total-row { border-top: 1px solid #eee; padding-top: 10px; font-weight: bold; font-size: 18px; color: #d35400; }
-        .btn-pay { width: 100%; background: #27ae60; color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .footer-nav { position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; border-top: 1px solid #eee; box-sizing: border-box; z-index: 100; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        .btn-checkout { background: var(--success); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 1.1rem; display: none; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 380px; padding: 25px; border-radius: 25px; text-align: center; }
+        .summary-list { text-align: left; background: #f9f9f9; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 15px 0; border: 1px dashed #ccc; }
     </style>
 </head>
 <body>
 
-    <h2 style="text-align: center; color: #d35400;">🥐 Menu Lucky Kue Sus</h2>
+<div class="header">
+    <h1>Lucky Kue Sus</h1>
+    <div style="font-size: 0.8rem; margin-top: 5px;">📍 Jl. Lolongok No. 14 Empang, Bogor</div>
+</div>
 
-    <div class="item-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="item-img">
-        <div class="item-detail">
-            <h3>Sus Strawberry</h3>
-            <p>Rp 15.000</p>
-        </div>
-        <div class="counter-box">
-            <button class="btn-qty" onclick="changeQty('strawberry', -1)">-</button>
-            <span class="qty-num" id="q-strawberry">0</span>
-            <button class="btn-qty" onclick="changeQty('strawberry', 1)">+</button>
+<div class="container">
+    <div class="box">
+        <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
+        <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
+    </div>
+
+    <div class="menu-card">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+        <div class="menu-details">
+            <p class="menu-title">Sus Strawberry</p>
+            <span class="menu-price">Rp 15.000</span>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty('Strawberry', -1, 15000)">-</button>
+                <span class="qty-num" id="val-Strawberry">0</span>
+                <button class="qty-btn" onclick="updateQty('Strawberry', 1, 15000)">+</button>
+            </div>
         </div>
     </div>
 
-    <div class="item-card">
-        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="item-img">
-        <div class="item-detail">
-            <h3>Sus Keju</h3>
-            <p>Rp 15.000</p>
-        </div>
-        <div class="counter-box">
-            <button class="btn-qty" onclick="changeQty('keju', -1)">-</button>
-            <span class="qty-num" id="q-keju">0</span>
-            <button class="btn-qty" onclick="changeQty('keju', 1)">+</button>
+    <div class="menu-card">
+        <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" class="menu-img">
+        <div class="menu-details">
+            <p class="menu-title">Sus Keju</p>
+            <span class="menu-price">Rp 15.000</span>
+            <div class="qty-controls">
+                <button class="qty-btn" onclick="updateQty('Keju', -1, 15000)">-</button>
+                <span class="qty-num" id="val-Keju">0</span>
+                <button class="qty-btn" onclick="updateQty('Keju', 1, 15000)">+</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="payment-box">
-        <div class="row"><span>Subtotal</span> <span id="sub-txt">Rp 0</span></div>
-        <div class="row" style="color: #27ae60;"><span>Diskon Level (5%)</span> <span id="disc-txt">-Rp 0</span></div>
-        <div class="row total-row"><span>Total Bayar</span> <span id="total-txt">Rp 0</span></div>
-        <button class="btn-pay" onclick="kirimStruk()">SAYA SUDAH BAYAR</button>
+<div class="footer-nav">
+    <button id="btnOrder" class="btn-checkout" onclick="showPayment()">PESAN & LIHAT QRIS</button>
+</div>
+
+<div id="paymentModal" class="modal">
+    <div class="modal-content">
+        <h3>Struk Pesanan Lucky</h3>
+        <div id="rincianFinal" class="summary-list"></div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=LUCKY_PAY" style="width:200px; margin-bottom:15px;">
+        <button onclick="sendToBot()" style="background:var(--success); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; cursor:pointer;">SAYA SUDAH BAYAR ✓</button>
     </div>
+</div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    let qty = { strawberry: 0, keju: 0 };
-    let harga = 15000;
-    
-    // Level 1 = 5%. Level 2 = 7% (Naik 2 angka sesuai perintah Anda)
-    let diskonPersen = 5; 
+    let cart = {};
+    let diskonPersen = 5; // Level 1 Default
 
-    function changeQty(item, delta) {
-        qty[item] = Math.max(0, qty[item] + delta);
-        document.getElementById('q-' + item).innerText = qty[item];
-        hitung();
+    function updateQty(name, delta, price) {
+        if (!cart[name]) cart[name] = { price, qty: 0 };
+        cart[name].qty = Math.max(0, cart[name].qty + delta);
+        document.getElementById('val-' + name).innerText = cart[name].qty;
+        
+        let totalQty = 0;
+        for (let x in cart) { totalQty += cart[x].qty; }
+        document.getElementById('btnOrder').style.display = totalQty > 0 ? 'block' : 'none';
     }
 
-    function hitung() {
-        let sub = (qty.strawberry + qty.keju) * harga;
-        let pot = (sub * diskonPersen) / 100;
-        let total = sub - pot;
+    function showPayment() {
+        let name = document.getElementById('customerName').value || "Tamu";
+        let subtotal = 0;
+        let rincian = `PESANAN: ${name}\n`;
+        let html = `<b>Nama: ${name}</b><br><br>`;
 
-        document.getElementById('sub-txt').innerText = "Rp " + sub.toLocaleString();
-        document.getElementById('disc-txt').innerText = "-Rp " + pot.toLocaleString();
-        document.getElementById('total-txt').innerText = "Rp " + total.toLocaleString();
-        return { sub, pot, total };
+        for (let x in cart) {
+            if (cart[x].qty > 0) {
+                let sub = cart[x].price * cart[x].qty;
+                subtotal += sub;
+                html += `• ${x} x${cart[x].qty} (Rp ${sub.toLocaleString()})<br>`;
+                rincian += `🔹 ${x} (x${cart[x].qty})\n`;
+            }
+        }
+
+        let pot = (subtotal * diskonPersen) / 100;
+        let total = subtotal - pot;
+
+        html += `<br>Subtotal: Rp ${subtotal.toLocaleString()}<br>`;
+        html += `<span style="color:green">Diskon (${diskonPersen}%): -Rp ${pot.toLocaleString()}</span><br>`;
+        html += `<b>TOTAL BAYAR: Rp ${total.toLocaleString()}</b>`;
+
+        let payload = rincian + `--------------------------\n💰 Subtotal: Rp ${subtotal.toLocaleString()}\n🎁 Diskon (${diskonPersen}%): -Rp ${pot.toLocaleString()}\n🔥 TOTAL: Rp ${total.toLocaleString()}\n✅ Status: Menunggu Konfirmasi QRIS`;
+
+        document.getElementById('rincianFinal').innerHTML = html;
+        document.getElementById('rincianFinal').setAttribute('data-payload', payload);
+        document.getElementById('paymentModal').style.display = 'flex';
     }
 
-    function kirimStruk() {
-        let data = hitung();
-        if (data.sub === 0) return alert("Pilih pesanan Anda!");
-
-        let struk = `PESANAN ANDA:\n`;
-        if(qty.strawberry > 0) struk += `- Sus Strawberry: ${qty.strawberry} box\n`;
-        if(qty.keju > 0) struk += `- Sus Keju: ${qty.keju} box\n`;
-        struk += `\nSubtotal: Rp ${data.sub.toLocaleString()}\n`;
-        struk += `Diskon Level (${diskonPersen}%): -Rp ${data.pot.toLocaleString()}\n`;
-        struk += `TOTAL BAYAR: Rp ${data.total.toLocaleString()}`;
-
-        tg.sendData(struk);
+    function sendToBot() {
+        let data = document.getElementById('rincianFinal').getAttribute('data-payload');
+        tg.sendData(data);
+        tg.close();
     }
 </script>
 </body>
