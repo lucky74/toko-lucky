@@ -38,6 +38,10 @@
     <div class="box">
         <label style="font-size:0.85rem; font-weight:bold;">NAMA PEMESAN:</label>
         <input type="text" id="customerName" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Tulis nama Anda...">
+        
+        <label style="font-size:0.85rem; font-weight:bold; margin-top:10px; display:block;">NOMOR WHATSAPP PEMBELI:</label>
+        <input type="number" id="customerPhone" style="width:100%; padding:12px; margin-top:8px; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;" placeholder="Contoh: 0896...">
+        
         <button class="btn-loc" id="btnGetLoc" onclick="ambilLokasi()">📍 CEK ONGKIR & LOKASI SAYA</button>
         <div id="statusLokasi" style="font-size:0.85rem; color:var(--success); margin-top:10px; display:none; font-weight:bold;">✅ Lokasi Pengiriman Terdeteksi</div>
     </div>
@@ -104,8 +108,11 @@
     }
 
     function showPayment() {
-        let name = document.getElementById('customerName').value.trim();
-        if(!name) return alert("Isi Nama Pemesan!");
+        let nameInput = document.getElementById('customerName');
+        let phoneInput = document.getElementById('customerPhone');
+        let name = nameInput ? nameInput.value.trim() : "";
+        let phone = phoneInput ? phoneInput.value.trim() : "";
+        if(!name || !phone) return alert("Isi Nama dan Nomor WA!");
         
         const sekarang = new Date();
         const tahun = sekarang.getFullYear();
@@ -113,16 +120,17 @@
         const kodeUnik = Date.now().toString().slice(-4);
         let resiId = "LKU-" + tahun + "-" + bulan + "-" + kodeUnik;
 
-        let user = tg.initDataUnsafe.user || { id: 0, username: 'unknown' };
-        let linkChatPembeli = user.username ? "https://t.me/" + user.username : "tg://user?id=" + user.id;
+        let user = tg.initDataUnsafe.user || { id: 0 };
+        let linkTelePembeli = "tg://user?id=" + user.id;
+        let linkWAPembeli = "https://wa.me/62" + phone.replace(/^0/, '');
 
         const opsi = { timeZone: 'Asia/Jakarta', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
         const waktuPesan = sekarang.toLocaleString('id-ID', opsi);
 
         let html = "<b>No. Resi: " + resiId + "</b><br><small>Waktu: " + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
-        html += "<b>Pemesan: " + name + "</b><br><br>";
+        html += "<b>Pemesan: " + name + "</b><br><b>WA: " + phone + "</b><br><br>";
         
-        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
+        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nWA: " + phone + "\nRINCIAN:\n\n";
         let totalKue = 0;
 
         for (let x in cart) {
@@ -136,9 +144,9 @@
         let total = totalKue + ongkir;
         let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
         
-        html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br>⏳ Estimasi Tiba: " + estimasiWaktu + " Menit<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
+        html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
         
-        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n⏳ Estimasi Tiba: " + estimasiWaktu + " Menit\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink + "||" + linkChatPembeli;
+        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink + "||" + linkTelePembeli + "||" + linkWAPembeli;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
