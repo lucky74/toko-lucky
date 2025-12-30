@@ -3,158 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lucky Clicker Pro - Leveling</title>
+    <title>Lucky Clicker Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --primary: #f39c12; --bg: #1a1a1a; --success: #27ae60; }
-        body { 
-            background: radial-gradient(circle at center, #2c3e50 0%, #000 100%);
-            margin: 0; padding: 0; color: white; font-family: 'Segoe UI', sans-serif;
-            height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden;
-        }
-        
+        body { background: radial-gradient(circle at center, #2c3e50 0%, #000 100%); margin: 0; padding: 0; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         .header-stats { width: 90%; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
         .level-badge { background: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
-        
         .score-section { margin-top: 20px; text-align: center; }
-        #score { font-size: 3.5rem; font-weight: 900; margin: 0; color: #fff; text-shadow: 0 0 20px rgba(243,156,18,0.5); }
-
-        .click-area { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; perspective: 1000px; }
+        #score { font-size: 3.5rem; font-weight: 900; margin: 0; text-shadow: 0 0 20px rgba(243,156,18,0.5); }
+        .click-area { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; }
         .main-item { width: 260px; height: 260px; transition: transform 0.1s; cursor: pointer; }
         .main-item img { width: 100%; border-radius: 50%; filter: drop-shadow(0 0 30px rgba(243,156,18,0.3)); pointer-events: none; }
-
         .energy-section { width: 85%; margin-bottom: 30px; }
-        .energy-bar-bg { width: 100%; height: 12px; background: #333; border-radius: 10px; margin-top: 8px; border: 1px solid #444; }
+        .energy-bar-bg { width: 100%; height: 12px; background: #333; border-radius: 10px; margin-top: 8px; }
         #energy-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #f1c40f, #e67e22); transition: width 0.1s; }
-
-        .plus-one { position: absolute; color: white; font-size: 2rem; font-weight: 900; pointer-events: none; animation: floatUp 0.6s ease-out forwards; z-index: 100; }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-130px); opacity: 0; } }
-
-        .promo-banner { 
-            background: rgba(255,255,255,0.1); width: 90%; padding: 15px; border-radius: 15px; 
-            margin-bottom: 20px; text-align: center; border: 1px solid var(--primary); display: none;
-        }
-        .btn-claim { background: var(--success); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; margin-top: 10px; width: 100%; }
+        .promo-banner { background: rgba(255,255,255,0.1); width: 90%; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: center; border: 1px solid var(--primary); display: none; }
+        .btn-claim { background: var(--success); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="header-stats">
         <div id="level-name" class="level-badge">Level 1: Pecinta Sus</div>
-        <div id="next-goal" style="font-size: 0.7rem; color: #aaa;">Target: 1.000</div>
+        <div id="next-goal" style="font-size: 0.7rem; color: #aaa;">Target: 500</div>
     </div>
-
     <div class="score-section">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-            <div style="width:30px; height:30px; background:gold; border-radius:50%; border:2px solid orange;"></div>
-            <p id="score">0</p>
-        </div>
+        <p id="score">0</p>
     </div>
-
     <div class="click-area" id="clicker">
         <div class="main-item" id="item-circle">
             <img src="https://ik.imagekit.io/uu3h5rnaw/images.jpg" alt="Lucky Sus">
         </div>
     </div>
-
     <div id="promo-box" class="promo-banner">
-        <div id="promo-text" style="font-weight: bold; font-size: 0.9rem;">🎁 WOW! Bonus Level Tercapai</div>
-        <button class="btn-claim" onclick="claimReward()">KLAIM DISKON KE BOT</button>
+        <div id="promo-text" style="font-weight: bold; font-size: 0.9rem; margin-bottom:10px;">🎁 LEVEL UP TERCAPAI!</div>
+        <button class="btn-claim" onclick="claimReward()">KLAIM HADIAH & KEMBALI</button>
     </div>
-
     <div class="energy-section">
-        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
             <span>⚡ ENERGI</span>
             <span id="energy-text">500 / 500</span>
         </div>
-        <div class="energy-bar-bg">
-            <div id="energy-fill"></div>
-        </div>
+        <div class="energy-bar-bg"><div id="energy-fill"></div></div>
     </div>
-
 <script>
     let tg = window.Telegram.WebApp; tg.expand();
-    let score = 0;
-    let energy = 500;
-    let maxEnergy = 500;
-    let currentLevel = 1;
-
-    // DATA LEVEL & PROMO
+    let score = 0; let energy = 500; let maxEnergy = 500; let currentLevel = 1;
     const levels = [
-        { lv: 1, name: "Pecinta Sus", goal: 1000, promo: "Diskon 5%", energy: 500 },
-        { lv: 2, name: "Juragan Sus", goal: 5000, promo: "Diskon 10%", energy: 1000 },
-        { lv: 3, name: "Master Sus", goal: 15000, promo: "Gratis 1 Sus Coklat", energy: 2000 },
-        { lv: 4, name: "Legenda Sus", goal: 50000, promo: "Diskon 25%", energy: 4000 },
-        { lv: 5, name: "Sultan Sus", goal: 100000, promo: "Box Eksklusif Gratis", energy: 8000 }
+        { lv: 1, name: "Pecinta Sus", goal: 500, promo: "Diskon 5%", energy: 500 },
+        { lv: 2, name: "Juragan Sus", goal: 2000, promo: "Diskon 10%", energy: 1000 }
     ];
-
-    const clicker = document.getElementById('clicker');
-    const circle = document.getElementById('item-circle');
-
-    clicker.addEventListener('touchstart', (e) => {
+    document.getElementById('clicker').addEventListener('touchstart', (e) => {
         e.preventDefault();
-        for (let i = 0; i < e.touches.length; i++) {
-            handleTap(e.touches[i].clientX, e.touches[i].clientY);
-        }
-    });
-
-    function handleTap(x, y) {
         if (energy <= 0) return;
-        score++;
-        energy--;
-        checkLevel();
+        score++; energy--;
         updateUI();
-
-        // Efek Visual & Suara (Haptic)
-        circle.style.transform = 'scale(0.92)';
-        setTimeout(() => circle.style.transform = 'scale(1)', 50);
+        if (score >= levels[currentLevel-1].goal) document.getElementById('promo-box').style.display = 'block';
         if(tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-
-        // Floating Text
-        const p = document.createElement('div');
-        p.className = 'plus-one';
-        p.innerText = '+1';
-        p.style.left = x + 'px';
-        p.style.top = y + 'px';
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 600);
-    }
-
-    function checkLevel() {
-        let levelData = levels.find(l => score >= l.goal);
-        if (levelData && levelData.lv >= currentLevel) {
-            currentLevel = levelData.lv + 1;
-            maxEnergy = levelData.energy;
-            document.getElementById('promo-box').style.display = 'block';
-            document.getElementById('promo-text').innerText = `🎁 LEVEL UP! Klaim: ${levelData.promo}`;
-        }
-    }
-
+    });
     function updateUI() {
-        document.getElementById('score').innerText = score.toLocaleString();
+        document.getElementById('score').innerText = score;
         document.getElementById('energy-text').innerText = `${energy} / ${maxEnergy}`;
         document.getElementById('energy-fill').style.width = (energy / maxEnergy * 100) + '%';
-        
-        let next = levels.find(l => score < l.goal) || levels[4];
-        document.getElementById('level-name').innerText = `Level ${currentLevel-1 || 1}: ${levels[currentLevel-2]?.name || 'Pecinta Sus'}`;
-        document.getElementById('next-goal').innerText = `Next: ${next.goal.toLocaleString()}`;
     }
-
     function claimReward() {
         let name = tg.initDataUnsafe.user ? tg.initDataUnsafe.user.first_name : "Player";
-        let lvName = levels[currentLevel-2].name;
-        let promo = levels[currentLevel-2].promo;
-        tg.sendData(`PROMO_KLAIM||${name}||${score}||${lvName}||${promo}`);
-        tg.close();
+        let lv = levels[currentLevel-1];
+        tg.sendData(`PROMO_KLAIM||${name}||${score}||${lv.name}||${lv.promo}`);
+        setTimeout(() => { tg.close(); }, 500);
     }
-
-    // Auto-Regen Energi (Biar orang balik lagi)
-    setInterval(() => {
-        if (energy < maxEnergy) {
-            energy += 1;
-            updateUI();
-        }
-    }, 2000);
 </script>
 </body>
 </html>
