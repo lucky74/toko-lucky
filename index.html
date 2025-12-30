@@ -99,13 +99,12 @@
         for (let x in cart) { count += cart[x].qty; total += (cart[x].price * cart[x].qty); }
         if (count > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
-            document.getElementById('btnOrder').innerText = `BAYAR LUNAS: RP ${(total + ongkir).toLocaleString('id-ID')}`;
+            document.getElementById('btnOrder').innerText = "BAYAR LUNAS: RP " + (total + ongkir).toLocaleString('id-ID');
         }
     }
 
     function showPayment() {
-        let nameInput = document.getElementById('customerName');
-        let name = nameInput ? nameInput.value.trim() : "";
+        let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama Pemesan!");
         
         const sekarang = new Date();
@@ -123,7 +122,7 @@
         let html = "<b>No. Resi: " + resiId + "</b><br><small>Waktu: " + waktuPesan + "</small><br><hr style='border:0.5px dashed #ccc'>";
         html += "<b>Pemesan: " + name + "</b><br><br>";
         
-        let teksBase = "🆔 *NO. RESI*: " + resiId + "\n📅 *WAKTU*: " + waktuPesan + "\n👤 *PEMESAN*: " + name + "\n📋 *RINCIAN*:\n\n";
+        let teksBase = "ID NO. RESI: " + resiId + "\nWAKTU: " + waktuPesan + "\nPEMESAN: " + name + "\nRINCIAN:\n\n";
         let totalKue = 0;
 
         for (let x in cart) {
@@ -131,7 +130,7 @@
             let sub = cart[x].price * cart[x].qty;
             totalKue += sub;
             html += "• " + x + " x" + cart[x].qty + " (Rp " + sub.toLocaleString() + ")<br><small>Note: " + note + "</small><br><br>";
-            teksBase += "🔹 *" + x + "* (x" + cart[x].qty + ")\n   Catatan: " + note + "\n\n";
+            teksBase += "🔹 " + x + " (x" + cart[x].qty + ")\n   Catatan: " + note + "\n\n";
         }
         
         let total = totalKue + ongkir;
@@ -139,7 +138,7 @@
         
         html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br>⏳ Estimasi Tiba: " + estimasiWaktu + " Menit<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
         
-        let payload = teksBase + "--------------------------\n🛵 *INFO PENGIRIMAN*:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n⏳ Estimasi Tiba: " + estimasiWaktu + " Menit\n💰 *TOTAL: Rp " + total.toLocaleString() + "*\n\n📍 *LOKASI PENERIMA*:\n" + gmapsLink + "||" + linkChatPembeli;
+        let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n⏳ Estimasi Tiba: " + estimasiWaktu + " Menit\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink + "||" + linkChatPembeli;
         
         document.getElementById('rincianFinal').innerHTML = html;
         document.getElementById('rincianFinal').setAttribute('data-payload', payload);
