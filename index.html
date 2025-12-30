@@ -119,7 +119,10 @@
     let tg = window.Telegram.WebApp; tg.expand();
     let cart = {}; let ongkir = 0, jarakGlobal = 0;
     let userLat = 0, userLon = 0;
-    const TOKO_LAT = -6.40248, TOKO_LON = 106.79424;
+    
+    // KOORDINAT TOKO TERBARU
+    const TOKO_LAT = -6.612098414089768; 
+    const TOKO_LON = 106.79659260728218;
 
     function ambilLokasi() {
         document.getElementById('btnGetLoc').innerText = "📍 Mendeteksi Lokasi...";
@@ -144,11 +147,8 @@
             cart[name].qty += delta;
             if (cart[name].qty <= 0) delete cart[name];
         }
-        
-        // Update angka di tampilan kartu menu
         let currentQty = cart[name] ? cart[name].qty : 0;
         document.getElementById('qty-' + name).innerText = currentQty;
-        
         updateUI();
     }
 
@@ -158,7 +158,6 @@
             count += cart[x].qty; 
             total += (cart[x].price * cart[x].qty); 
         }
-        
         if (count > 0 && ongkir > 0) {
             document.getElementById('btnOrder').style.display = 'block';
             document.getElementById('btnOrder').innerText = "BAYAR LUNAS: RP " + (total + ongkir).toLocaleString('id-ID');
@@ -170,7 +169,6 @@
     function showPayment() {
         let name = document.getElementById('customerName').value.trim();
         if(!name) return alert("Isi Nama Pemesan!");
-        
         const sekarang = new Date();
         let resiId = "LKU-" + sekarang.getFullYear() + "-" + String(sekarang.getMonth() + 1).padStart(2, '0') + "-" + Date.now().toString().slice(-4);
         const waktuPesan = sekarang.toLocaleString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -190,10 +188,9 @@
         }
         
         let total = totalKue + ongkir;
-        let gmapsLink = "https://www.google.com/maps?q=" + userLat + "," + userLon;
+        let gmapsLink = "http://maps.google.com/maps?q=" + userLat + "," + userLon;
         
         html += "<hr style='border:0.5px dashed #ccc'>🛵 Jarak: " + jarakGlobal.toFixed(1) + " km<br><h3>TOTAL: Rp " + total.toLocaleString() + "</h3>";
-        
         let payload = teksBase + "--------------------------\n🛵 INFO PENGIRIMAN:\n📍 Jarak: " + jarakGlobal.toFixed(1) + " km\n💰 TOTAL: Rp " + total.toLocaleString() + "\n\n📍 LOKASI PENERIMA:\n" + gmapsLink;
         
         document.getElementById('rincianFinal').innerHTML = html;
